@@ -5,12 +5,11 @@ import java.net.*;
 
 public class Client {
     public static void main(String[] args) throws IOException {
-        String serverAddress = "203.101.178.27"; // Change to server IP if needed
-        int serverPort = 2456;
+        ConnectionAddress ServerAddress = new ConnectionAddress("Ip and port.txt");
 
         // Create a socket connection to the server
-        Socket clientSocket = new Socket(serverAddress, serverPort);
-        System.out.println("Connected to server at " + serverAddress + ":" + serverPort);
+        Socket clientSocket = new Socket(ServerAddress.getIpAddress(), ServerAddress.getPort());
+        System.out.println("Connected to server at " + ServerAddress.getIpAddress() + ":" + ServerAddress.getPort());
 
         // Create input and output streams for communication with the server
         BufferedReader inFromServer = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));

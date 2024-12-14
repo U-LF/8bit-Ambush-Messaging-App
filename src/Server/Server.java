@@ -43,7 +43,6 @@ public class Server {
                 outToClient = new DataOutputStream(clientSocket.getOutputStream());
 
                 // Ask for the client's name
-                outToClient.writeBytes("Enter your name: ");
                 clientName = inFromClient.readLine();
                 System.out.println(clientName + " has joined the chat.");
 
