@@ -16,6 +16,8 @@ public class Client {
         DataOutputStream outToServer = new DataOutputStream(clientSocket.getOutputStream());
         BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in));
 
+        StringBuilder messageBuilder = new StringBuilder();
+
         // Get the client's name
         System.out.print("Enter your name: ");
         String name = userInput.readLine();
@@ -26,7 +28,8 @@ public class Client {
             try {
                 String serverMessage;
                 while ((serverMessage = inFromServer.readLine()) != null) {
-                    System.out.println(serverMessage);
+                    System.out.println("\n" + serverMessage);
+                    System.out.print("\rEnter message (or 'exit' to quit): " + messageBuilder.toString());
                 }
             } catch (IOException e) {
                 System.err.println("Error reading from server: " + e.getMessage());
@@ -34,15 +37,25 @@ public class Client {
         });
         listenThread.start();
 
-        // Main thread to send messages to the server
-        String message;
         while (true) {
-            System.out.print("Enter message (or 'exit' to quit): ");
-            message = userInput.readLine();
-            if (message.equalsIgnoreCase("exit")) {
-                break;
+            // Print current message being typed
+            System.out.print("\rEnter message (or 'exit' to quit): " + messageBuilder.toString());
+
+            // Read character by character
+            int input = System.in.read();
+
+            char charInput = (char) input;
+
+            if (charInput == '\n') { // Enter key pressed
+                String message = messageBuilder.toString();
+                if (message.equalsIgnoreCase("exit")) {
+                    break;
+                }
+                outToServer.writeBytes(message + "\n");
+                messageBuilder.setLength(0); // Reset message after sending
+            } else {
+                messageBuilder.append(charInput);
             }
-            outToServer.writeBytes(message + "\n");
         }
 
         clientSocket.close();

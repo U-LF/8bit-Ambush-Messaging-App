@@ -1,16 +1,39 @@
 package Server;
 
-import java.io.*;
-import java.net.*;
-import java.util.*;
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.ServerSocket;
+import java.net.Socket;
+import java.util.HashSet;
+import java.util.Set;
 
 public class Server {
-    // Set to hold all connected clients' output streams
-    private static Set<ClientHandler> clients = new HashSet<>();
+    // Set to hold all connected clients' handlers
+    protected static Set<ClientHandler> clients = new HashSet<>();
 
     public static void main(String[] args) throws IOException {
         ServerSocket serverSocket = new ServerSocket(2456);
         System.out.println("Server started, waiting for clients...");
+
+        Thread ServerTalkThread = new Thread(() -> {
+            try {
+                BufferedReader serverInput = new BufferedReader(new InputStreamReader(System.in));
+                String serverMessage;
+                while (true) {
+                    System.out.print("Server (type message to send): ");
+                    serverMessage = serverInput.readLine();
+
+                    if (serverMessage != null && !serverMessage.trim().isEmpty()) {
+                        // Broadcast the message to all clients
+                        ClientHandler.broadcastMessage("Server: " + serverMessage, null);
+                    }
+                }
+            } catch (IOException e) {
+                System.err.println("Error reading server input: " + e.getMessage());
+            }
+        });
+        ServerTalkThread.start();
 
         while (true) {
             // Accept new client connections
@@ -21,71 +44,6 @@ public class Server {
             ClientHandler clientHandler = new ClientHandler(clientSocket);
             clients.add(clientHandler);
             new Thread(clientHandler).start();
-        }
-    }
-
-    // ClientHandler class that handles communication with each client
-    private static class ClientHandler implements Runnable {
-        private Socket clientSocket;
-        private BufferedReader inFromClient;
-        private DataOutputStream outToClient;
-        private String clientName;
-
-        public ClientHandler(Socket clientSocket) {
-            this.clientSocket = clientSocket;
-        }
-
-        @Override
-        public void run() {
-            try {
-                // Create input and output streams for the client
-                inFromClient = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
-                outToClient = new DataOutputStream(clientSocket.getOutputStream());
-
-                // Ask for the client's name
-                clientName = inFromClient.readLine();
-                System.out.println(clientName + " has joined the chat.");
-
-                // Send welcome message to the client
-                outToClient.writeBytes("Welcome " + clientName + "! You are now connected to the chat room.\n");
-
-                // Notify all clients that a new user has joined
-                broadcastMessage(clientName + " has joined the chat.", this);
-
-                String clientMessage;
-                while ((clientMessage = inFromClient.readLine()) != null) {
-                    System.out.println(clientName + ": " + clientMessage);
-                    // Broadcast the message to all clients
-                    broadcastMessage(clientName + ": " + clientMessage, this);
-                }
-            } catch (IOException e) {
-                System.err.println("Connection error with client: " + clientName);
-            } finally {
-                try {
-                    // Clean up and remove client from the list of active clients
-                    System.out.println(clientName + " has left the chat.");
-                    broadcastMessage(clientName + " has left the chat.", this);
-                    clients.remove(this);
-                    clientSocket.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
-
-        // Method to send a message to all clients except the sender
-        private void broadcastMessage(String message, ClientHandler sender) {
-            synchronized (clients) {
-                for (ClientHandler client : clients) {
-                    if (client != sender) {
-                        try {
-                            client.outToClient.writeBytes(message + "\n");
-                        } catch (IOException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }
-            }
         }
     }
 }
