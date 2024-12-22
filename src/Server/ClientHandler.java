@@ -22,7 +22,8 @@ public class ClientHandler implements Runnable {
 
             // Ask for the client's name
             clientName = inFromClient.readLine();
-            System.out.println(clientName + " has joined the chat.");
+            System.out.println("\n" + clientName + " has joined the chat.");
+            Server.ServerMsgPrompt("\r");
 
             // Send welcome message to the client
             outToClient.writeBytes("Welcome " + clientName + "! You are now connected to the chat room.\n");
@@ -32,7 +33,8 @@ public class ClientHandler implements Runnable {
 
             String clientMessage;
             while ((clientMessage = inFromClient.readLine()) != null) {
-                System.out.println(clientName + ": " + clientMessage);
+                System.out.println("\n" + clientName + ": " + clientMessage);
+                Server.ServerMsgPrompt("\r");
                 // Broadcast the message to all clients
                 broadcastMessage(clientName + ": " + clientMessage, this);
             }
@@ -41,7 +43,8 @@ public class ClientHandler implements Runnable {
         } finally {
             try {
                 // Clean up and remove client from the list of active clients
-                System.out.println(clientName + " has left the chat.");
+                System.out.println("\n" + clientName + " has left the chat.");
+                Server.ServerMsgPrompt("\r");
                 broadcastMessage(clientName + " has left the chat.", this);
                 Server.clients.remove(this);
                 clientSocket.close();
