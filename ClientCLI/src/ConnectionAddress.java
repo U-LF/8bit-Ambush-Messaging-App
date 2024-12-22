@@ -1,5 +1,3 @@
-package Client;
-
 import java.io.*;
 
 public class ConnectionAddress {

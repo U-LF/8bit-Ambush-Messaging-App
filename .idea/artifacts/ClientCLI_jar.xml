@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="ClientCLI:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/ClientCLI_jar</output-path>
+    <root id="archive" name="ClientCLI.jar">
+      <element id="module-output" name="ClientCLI" />
+    </root>
+  </artifact>
+</component>
