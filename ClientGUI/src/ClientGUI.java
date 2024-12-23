@@ -8,6 +8,15 @@ public class ClientGUI {
     private static DataOutputStream outToServer;
 
     public static void main(String[] args) {
+        // Create and show the Dashboard first
+        SwingUtilities.invokeLater(() -> {
+            DashboardFrame dashboard = new DashboardFrame();
+            dashboard.showDashboard();
+        });
+    }
+
+    // Method to connect to the server
+    public static void connectToServer() {
         try {
             // Load server connection details
             ConnectionAddress serverAddress = new ConnectionAddress("Ip and port.txt");
