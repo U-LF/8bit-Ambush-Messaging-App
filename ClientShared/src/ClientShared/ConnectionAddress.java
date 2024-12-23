@@ -1,3 +1,5 @@
+package ClientShared;
+
 import java.io.*;
 
 public class ConnectionAddress {

@@ -4,6 +4,7 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/ClientCLI/ClientCLI.iml" filepath="$PROJECT_DIR$/ClientCLI/ClientCLI.iml" />
       <module fileurl="file://$PROJECT_DIR$/ClientGUI/ClientGUI.iml" filepath="$PROJECT_DIR$/ClientGUI/ClientGUI.iml" />
+      <module fileurl="file://$PROJECT_DIR$/ClientShared/ClientShared.iml" filepath="$PROJECT_DIR$/ClientShared/ClientShared.iml" />
       <module fileurl="file://$PROJECT_DIR$/MsgingApp.iml" filepath="$PROJECT_DIR$/MsgingApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/ServerCLI/ServerCLI.iml" filepath="$PROJECT_DIR$/ServerCLI/ServerCLI.iml" />
     </modules>

@@ -1,6 +1,8 @@
 import java.io.*;
 import java.net.*;
 
+import ClientShared.ConnectionAddress;
+
 public class Client {
     public static void main(String[] args) throws IOException {
         ConnectionAddress ServerAddress = new ConnectionAddress("Ip and port.txt");

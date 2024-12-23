@@ -7,6 +7,5 @@
     </content>
     <orderEntry type="jdk" jdkName="23" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module" module-name="ClientShared" />
   </component>
 </module>
