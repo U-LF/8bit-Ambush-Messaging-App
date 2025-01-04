@@ -1,9 +1,13 @@
 import java.io.*;
 import java.net.*;
+import java.util.ArrayList;
+import java.util.List;
 
 import ClientShared.ConnectionAddress;
 
 public class Client {
+    private static List<String> connectedClients = new ArrayList<>(); // List to store connected clients
+
     public static void main(String[] args) throws IOException {
         ConnectionAddress ServerAddress = new ConnectionAddress("Ip and port.txt");
 
@@ -28,8 +32,15 @@ public class Client {
             try {
                 String serverMessage;
                 while ((serverMessage = inFromServer.readLine()) != null) {
-                    System.out.println("\n" + serverMessage);
-                    System.out.print("\rEnter message (or 'exit' to quit): " + messageBuilder.toString());
+                    if (serverMessage.startsWith("Currently connected clients:")) {
+                        // Parse and display the list of connected clients
+                        updateConnectedClientsList(serverMessage);
+                        System.out.println();
+                        displayStringArray(connectedClients.toArray(new String[0]));
+                    } else {
+                        System.out.println("\n" + serverMessage);
+                        System.out.print("\rEnter message (or 'exit' to quit): " + messageBuilder.toString());
+                    }
                 }
             } catch (IOException e) {
                 System.err.println("Error reading from server: " + e.getMessage());
@@ -60,5 +71,33 @@ public class Client {
 
         clientSocket.close();
         System.out.println("Disconnected from server.");
+    }
+
+    private static String[] makeStringArray(String input)
+    {
+        if(input.isEmpty())
+        {
+            return new String[0];
+        } else {
+            return input.split(",\\s*");
+        }
+    }
+
+    private static String trimString (String input, String PartToCut)
+    {
+        return input.substring(PartToCut.length()).trim();
+    }
+
+    private static void displayStringArray(String[] stringArray)
+    {
+        for (String msgOnIndex : stringArray) {
+            System.out.println(msgOnIndex);
+        }
+    }
+
+    // Method to update the list of connected clients
+    private static void updateConnectedClientsList(String serverMessage) {
+        connectedClients.clear();  // Clear the existing list
+        connectedClients.addAll(List.of(makeStringArray(trimString(serverMessage, "Currently connected clients:")))); //adds the entire list to the local list
     }
 }

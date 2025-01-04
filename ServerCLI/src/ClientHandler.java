@@ -23,6 +23,8 @@ public class ClientHandler implements Runnable {
             System.out.println("\n" + clientName + " has joined the chat.");
             Server.ServerMsgPrompt("\r");
 
+            broadcastConnectedClientsList();
+
             // Send welcome message to the client
             outToClient.writeBytes("Welcome " + clientName + "! You are now connected to the chat room.\n");
 
@@ -62,6 +64,26 @@ public class ClientHandler implements Runnable {
                     } catch (IOException e) {
                         e.printStackTrace();
                     }
+                }
+            }
+        }
+    }
+
+    private void broadcastConnectedClientsList() throws IOException {
+        synchronized (Server.clients) {
+            StringBuilder clientList = new StringBuilder("Currently connected clients: ");
+            for (ClientHandler client : Server.clients) {
+                clientList.append(client.clientName).append(", ");
+            }
+            // Remove the trailing comma and space
+            if (clientList.length() > 0) {
+                clientList.setLength(clientList.length() - 2);
+            }
+            for (ClientHandler client : Server.clients) {
+                try {
+                    client.outToClient.writeBytes(clientList.toString() + "\n");
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
             }
         }
