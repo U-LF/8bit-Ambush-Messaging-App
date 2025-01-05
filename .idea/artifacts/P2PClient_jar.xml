@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="P2PClient:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/P2PClient_jar</output-path>
+    <root id="archive" name="P2PClient.jar">
+      <element id="module-output" name="P2PClient" />
+    </root>
+  </artifact>
+</component>
