@@ -20,48 +20,39 @@ public class ClientGUIFrame {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         frame.setSize(500, 400);
 
-        // Use BorderLayout for flexible positioning
         frame.setLayout(new BorderLayout());
 
-        JPanel messagePanel = new JPanel(new BorderLayout());
-        messageArea = new JTextArea();
-        messageArea.setEditable(false);
-        JScrollPane scrollPane = new JScrollPane(messageArea);
-        messagePanel.add(scrollPane, BorderLayout.CENTER);
-
+        JPanel messagePanel = createMessagePanel();
         JPanel inputPanel = new JPanel(new BorderLayout());
-        inputField = new JTextField();
+        inputField = new RoundedTextField(20);
+        inputField.setBackground(Color.LIGHT_GRAY);
+        inputField.setForeground(Color.BLACK);
 
-        // Create the send button using the image URL you provided
         JButton sendButton = createSendButton();
-
-        // Create Active Users Button (Top-right corner)
         JButton activeUsersButton = createActiveUsersButton();
-
-        // Create Settings Button (Top-left corner)
         JButton settingsButton = createSettingsButton();
 
-        // Add buttons to the frame with dynamic resizing
         JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setPreferredSize(new Dimension(frame.getWidth(), 50));
+        topPanel.setPreferredSize(new Dimension(frame.getWidth(), 80));
+        topPanel.setBackground(new Color(70, 130, 180)); // Steel Blue background
 
-        // Add buttons to top panel (left and right positioning)
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        leftPanel.setOpaque(false); // Transparent background
         leftPanel.add(settingsButton);
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
+        rightPanel.setOpaque(false); // Transparent background
         rightPanel.add(activeUsersButton);
 
         topPanel.add(leftPanel, BorderLayout.WEST);
         topPanel.add(rightPanel, BorderLayout.EAST);
 
-        // Set up the input panel
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
-        frame.add(topPanel, BorderLayout.NORTH);  // Add the top panel (with buttons)
-        frame.add(messagePanel, BorderLayout.CENTER);  // Add the message area
-        frame.add(inputPanel, BorderLayout.SOUTH);  // Add the input panel
+        frame.add(topPanel, BorderLayout.NORTH);
+        frame.add(messagePanel, BorderLayout.CENTER);
+        frame.add(inputPanel, BorderLayout.SOUTH);
 
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
@@ -69,7 +60,6 @@ public class ClientGUIFrame {
         sendButton.addActionListener(e -> sendMessage());
         inputField.addActionListener(e -> sendMessage());
 
-        // Dynamically resize buttons when the frame size changes
         frame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent e) {
@@ -77,24 +67,56 @@ public class ClientGUIFrame {
             }
         });
 
-        // Initial theme application
         updateTheme(frame);
+    }
+
+    private JPanel createMessagePanel() {
+        JPanel panel = new JPanel(new BorderLayout()) {
+            private Image backgroundImage;
+
+            {
+                try {
+                    URL imageUrl = new URL("https://www.shutterstock.com/image-vector/social-media-sketch-vector-seamless-600nw-1660950727.jpg");
+                    backgroundImage = new ImageIcon(imageUrl).getImage();
+                } catch (Exception e) {
+                    System.err.println("Error loading background image: " + e.getMessage());
+                }
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                super.paintComponent(g);
+                if (backgroundImage != null) {
+                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
+                }
+            }
+        };
+
+        messageArea = new JTextArea();
+        messageArea.setEditable(false);
+        messageArea.setOpaque(false); // Make the text area transparent
+        messageArea.setForeground(Color.BLACK);
+        JScrollPane scrollPane = new JScrollPane(messageArea);
+        scrollPane.setOpaque(false);
+        scrollPane.getViewport().setOpaque(false);
+
+        panel.add(scrollPane, BorderLayout.CENTER);
+        return panel;
     }
 
     private JButton createSendButton() {
         try {
             URL sendButtonUrl = new URL("https://cdn-icons-png.freepik.com/256/4458/4458496.png?semt=ais_hybrid");
             ImageIcon sendIcon = new ImageIcon(sendButtonUrl);
-            Image img = sendIcon.getImage();  // Get the image
-            int newSize = 40; // Set a larger size for the image
-            Image resizedImg = img.getScaledInstance(newSize, newSize, Image.SCALE_SMOOTH);  // Resize the image
-            sendIcon = new ImageIcon(resizedImg);  // Set resized image
+            Image img = sendIcon.getImage();
+            int newSize = 40;
+            Image resizedImg = img.getScaledInstance(newSize, newSize, Image.SCALE_SMOOTH);
+            sendIcon = new ImageIcon(resizedImg);
 
             JButton sendButton = new JButton(sendIcon);
             sendButton.setPreferredSize(new Dimension(newSize, newSize));
-            sendButton.setBackground(Color.BLACK);
-            sendButton.setContentAreaFilled(false);  // Make button background transparent
-            sendButton.setFocusPainted(false);  // Remove focus paint
+            sendButton.setContentAreaFilled(false);
+            sendButton.setFocusPainted(false);
             return sendButton;
         } catch (Exception e) {
             System.err.println("Error loading send button icon: " + e.getMessage());
@@ -103,20 +125,19 @@ public class ClientGUIFrame {
     }
 
     private JButton createActiveUsersButton() {
-        // Active Users button with image from URL
         try {
             URL activeUsersUrl = new URL("https://www.voxco.com/wp-content/uploads/2022/03/DAILY-ACTIVE-USERS1.png");
             ImageIcon activeUsersIcon = new ImageIcon(activeUsersUrl);
-            Image img = activeUsersIcon.getImage();  // Get the image
-            int newSize = 50; // Set a larger size for the image
-            Image resizedImg = img.getScaledInstance(newSize, newSize, Image.SCALE_SMOOTH);  // Resize the image
-            activeUsersIcon = new ImageIcon(resizedImg);  // Set resized image
+            Image img = activeUsersIcon.getImage();
+            int newSize = 60;
+            Image resizedImg = img.getScaledInstance(newSize, newSize, Image.SCALE_SMOOTH);
+            activeUsersIcon = new ImageIcon(resizedImg);
 
             JButton activeUsersButton = new JButton(activeUsersIcon);
-            activeUsersButton.setPreferredSize(new Dimension(newSize, newSize));
-            activeUsersButton.setBackground(Color.BLACK);
-            activeUsersButton.setContentAreaFilled(false);  // Make button background transparent
-            activeUsersButton.setFocusPainted(false);  // Remove focus paint
+            activeUsersButton.setBorderPainted(false);
+            activeUsersButton.setBorder(null);
+            activeUsersButton.setContentAreaFilled(false);
+            activeUsersButton.setFocusPainted(false);
             activeUsersButton.addActionListener(e -> showActiveUsersDialog());
             return activeUsersButton;
         } catch (Exception e) {
@@ -125,46 +146,43 @@ public class ClientGUIFrame {
         }
     }
 
-    private void showActiveUsersDialog() {
-        // Show active users list
-        JOptionPane.showMessageDialog(null, "Active Users List");
-    }
-
     private JButton createSettingsButton() {
-        // Settings button with image from URL
         try {
-            URL settingsUrl = new URL("https://png.pngtree.com/element_our/png/20181227/settings-glyph-black-icon-png_292947.jpg");
+            URL settingsUrl = new URL("https://cdn-icons-png.flaticon.com/512/3524/3524659.png");
             ImageIcon settingsIcon = new ImageIcon(settingsUrl);
-            Image img = settingsIcon.getImage();  // Get the image
-            int newSize = 50; // Set a larger size for the image
-            Image resizedImg = img.getScaledInstance(newSize, newSize, Image.SCALE_SMOOTH);  // Resize the image
-            settingsIcon = new ImageIcon(resizedImg);  // Set resized image
+            Image img = settingsIcon.getImage();
+            int newSize = 50;
+            Image resizedImg = img.getScaledInstance(newSize, newSize, Image.SCALE_SMOOTH);
+            settingsIcon = new ImageIcon(resizedImg);
 
             JButton settingsButton = new JButton(settingsIcon);
             settingsButton.setPreferredSize(new Dimension(newSize, newSize));
-            settingsButton.setBackground(Color.BLACK);
-            settingsButton.setContentAreaFilled(false);  // Make button background transparent
-            settingsButton.setFocusPainted(false);  // Remove focus paint
+            settingsButton.setContentAreaFilled(false);
+            settingsButton.setFocusPainted(false);
+            settingsButton.setBorderPainted(false);
             settingsButton.addActionListener(e -> openSettingsDialog());
             return settingsButton;
         } catch (Exception e) {
-            System.err.println("Error loading settings icon: " + e.getMessage());
+            e.printStackTrace();
             return new JButton("Settings");
         }
     }
 
+
+
+    private void showActiveUsersDialog() {
+        JOptionPane.showMessageDialog(null, "Active Users List");
+    }
+
     private void openSettingsDialog() {
-        // Instead of null, pass the frame to set it as parent for the dialog
         JDialog settingsDialog = new JDialog((Frame) null, "Settings", true);
         settingsDialog.setSize(300, 200);
         settingsDialog.setLayout(new GridLayout(3, 1));
 
-        // Button for username update
         JButton usernameButton = new JButton("Change Username");
         usernameButton.addActionListener(e -> changeUsername(settingsDialog));
         settingsDialog.add(usernameButton);
 
-        // Button for switching themes
         JButton themeButton = new JButton("Switch Theme");
         themeButton.addActionListener(e -> switchTheme(settingsDialog));
         settingsDialog.add(themeButton);
@@ -177,7 +195,7 @@ public class ClientGUIFrame {
         String newUsername = JOptionPane.showInputDialog(settingsDialog, "Enter new username:", username);
         if (newUsername != null && !newUsername.trim().isEmpty()) {
             username = newUsername.trim();
-            sendUsernameToServer();  // Send the updated username to the server
+            sendUsernameToServer();
         }
     }
 
@@ -194,42 +212,27 @@ public class ClientGUIFrame {
         int choice = JOptionPane.showOptionDialog(settingsDialog, "Choose Theme", "Switch Theme", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
 
         if (choice == 0) {
-            // Light mode
             isDarkMode = false;
-            updateTheme((JFrame) SwingUtilities.getRoot(messageArea));  // Apply theme to root frame
+            updateTheme((JFrame) SwingUtilities.getRoot(messageArea));
         } else {
-            // Dark mode
             isDarkMode = true;
-            updateTheme((JFrame) SwingUtilities.getRoot(messageArea));  // Apply theme to root frame
+            updateTheme((JFrame) SwingUtilities.getRoot(messageArea));
         }
     }
 
     private void updateTheme(JFrame frame) {
-        // Change colors for light mode or dark mode
         if (isDarkMode) {
             UIManager.put("Panel.background", Color.DARK_GRAY);
-            UIManager.put("TextArea.background", Color.BLACK);
-            UIManager.put("TextArea.foreground", Color.WHITE);
-            UIManager.put("Button.background", Color.BLACK);
-            UIManager.put("Button.foreground", Color.WHITE);
             messageArea.setBackground(Color.BLACK);
-            messageArea.setForeground(Color.WHITE);
             inputField.setBackground(Color.BLACK);
             inputField.setForeground(Color.WHITE);
         } else {
             UIManager.put("Panel.background", Color.WHITE);
-            UIManager.put("TextArea.background", Color.WHITE);
-            UIManager.put("TextArea.foreground", Color.BLACK);
-            UIManager.put("Button.background", Color.WHITE);
-            UIManager.put("Button.foreground", Color.BLACK);
             messageArea.setBackground(Color.WHITE);
-            messageArea.setForeground(Color.BLACK);
             inputField.setBackground(Color.WHITE);
             inputField.setForeground(Color.BLACK);
         }
-
-        // Apply changes to all UI components
-        SwingUtilities.updateComponentTreeUI(frame); // Update entire frame
+        SwingUtilities.updateComponentTreeUI(frame);
     }
 
     private void sendMessage() {
@@ -249,18 +252,41 @@ public class ClientGUIFrame {
         messageArea.append(message);
     }
 
-    // Resize buttons dynamically when the frame is resized
     private void resizeButtons(JFrame frame) {
-        // Get the width and height of the frame
-        int width = frame.getWidth();
-        int height = frame.getHeight();
-
-        // Set new button sizes based on frame size
-        int newSize = Math.min(width, height) / 15; // Dynamic size proportional to window
+        int newSize = Math.min(frame.getWidth(), frame.getHeight()) / 15;
         for (Component comp : frame.getComponents()) {
             if (comp instanceof JButton) {
                 comp.setPreferredSize(new Dimension(newSize, newSize));
             }
         }
+    }
+}
+
+// RoundedTextField class (unchanged)
+class RoundedTextField extends JTextField {
+    private final int arcWidth = 20;
+
+    public RoundedTextField(int columns) {
+        super(columns);
+        setOpaque(false);
+    }
+
+    @Override
+    protected void paintComponent(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(getBackground());
+        g2.fillRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcWidth, arcWidth);
+        super.paintComponent(g);
+        g2.dispose();
+    }
+
+    @Override
+    protected void paintBorder(Graphics g) {
+        Graphics2D g2 = (Graphics2D) g.create();
+        g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2.setColor(getForeground());
+        g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, arcWidth, arcWidth);
+        g2.dispose();
     }
 }
