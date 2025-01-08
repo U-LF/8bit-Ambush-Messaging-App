@@ -3,7 +3,9 @@ import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
+
 import javax.swing.border.Border;
+
 
 public class DashboardFrame {
 
@@ -42,7 +44,7 @@ public class DashboardFrame {
         // Create neon-style buttons
         JButton connectButton = createStyledButton("Connect to Server", e -> {
             dashboardFrame.dispose();
-            ClientGUI.connectToServer();
+            ClientConnection.connectToServer();
         });
 
         JButton configButton = createStyledButton("Config", e -> {
