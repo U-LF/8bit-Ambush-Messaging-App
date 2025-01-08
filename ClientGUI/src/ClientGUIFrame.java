@@ -12,12 +12,14 @@ public class ClientGUIFrame {
     private boolean isDarkMode = false; // Flag to toggle between Dark and Light mode
     private ThemeManager themeManager;
     private ActiveUsersManager activeUsersManager; // New ActiveUsersManager instance
+    private SettingsManager settingsManager; // New SettingsManager instance
 
     public ClientGUIFrame(DataOutputStream outToServer) {
 
         this.outToServer = outToServer;
         this.themeManager = new ThemeManager(isDarkMode);
         this.activeUsersManager = new ActiveUsersManager(); // Initialize ActiveUsersManager
+        this.settingsManager = new SettingsManager(); // Initialize SettingsManager
     }
 
     public void showGUI() {
@@ -35,7 +37,7 @@ public class ClientGUIFrame {
 
         JButton sendButton = createSendButton();
         JButton activeUsersButton = activeUsersManager.createActiveUsersButton(); // Use method from ActiveUsersManager
-        JButton settingsButton = createSettingsButton();
+        JButton settingsButton = settingsManager.createSettingsButton(this); // Use method from SettingsManager
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setPreferredSize(new Dimension(frame.getWidth(), 80));
@@ -172,7 +174,7 @@ public class ClientGUIFrame {
         settingsDialog.setVisible(true);
     }
 
-    private void changeUsername(JDialog settingsDialog) {
+    void changeUsername(JDialog settingsDialog) {
         String newUsername = JOptionPane.showInputDialog(settingsDialog, "Enter new username:", username);
         if (newUsername != null && !newUsername.trim().isEmpty()) {
             username = newUsername.trim();
@@ -212,6 +214,20 @@ public class ClientGUIFrame {
                 comp.setPreferredSize(new Dimension(newSize, newSize));
             }
         }
+    }
+    // Getter for themeManager
+    public ThemeManager getThemeManager() {
+        return themeManager;
+    }
+
+    // Getter for messageArea
+    public JTextArea getMessageArea() {
+        return messageArea;
+    }
+
+    // Getter for inputField
+    public JTextField getInputField() {
+        return inputField;
     }
 }
 
