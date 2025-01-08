@@ -11,11 +11,13 @@ public class ClientGUIFrame {
     private String username = "Anonymous"; // Default username
     private boolean isDarkMode = false; // Flag to toggle between Dark and Light mode
     private ThemeManager themeManager;
+    private ActiveUsersManager activeUsersManager; // New ActiveUsersManager instance
 
     public ClientGUIFrame(DataOutputStream outToServer) {
 
         this.outToServer = outToServer;
         this.themeManager = new ThemeManager(isDarkMode);
+        this.activeUsersManager = new ActiveUsersManager(); // Initialize ActiveUsersManager
     }
 
     public void showGUI() {
@@ -32,7 +34,7 @@ public class ClientGUIFrame {
         inputField.setForeground(Color.BLACK);
 
         JButton sendButton = createSendButton();
-        JButton activeUsersButton = createActiveUsersButton();
+        JButton activeUsersButton = activeUsersManager.createActiveUsersButton(); // Use method from ActiveUsersManager
         JButton settingsButton = createSettingsButton();
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -127,27 +129,6 @@ public class ClientGUIFrame {
         }
     }
 
-    private JButton createActiveUsersButton() {
-        try {
-            URL activeUsersUrl = new URL("https://www.voxco.com/wp-content/uploads/2022/03/DAILY-ACTIVE-USERS1.png");
-            ImageIcon activeUsersIcon = new ImageIcon(activeUsersUrl);
-            Image img = activeUsersIcon.getImage();
-            int newSize = 60;
-            Image resizedImg = img.getScaledInstance(newSize, newSize, Image.SCALE_SMOOTH);
-            activeUsersIcon = new ImageIcon(resizedImg);
-
-            JButton activeUsersButton = new JButton(activeUsersIcon);
-            activeUsersButton.setBorderPainted(false);
-            activeUsersButton.setBorder(null);
-            activeUsersButton.setContentAreaFilled(false);
-            activeUsersButton.setFocusPainted(false);
-            activeUsersButton.addActionListener(e -> showActiveUsersDialog());
-            return activeUsersButton;
-        } catch (Exception e) {
-            System.err.println("Error loading active users icon: " + e.getMessage());
-            return new JButton("Active Users");
-        }
-    }
 
     private JButton createSettingsButton() {
         try {
@@ -169,12 +150,6 @@ public class ClientGUIFrame {
             e.printStackTrace();
             return new JButton("Settings");
         }
-    }
-
-
-
-    private void showActiveUsersDialog() {
-        JOptionPane.showMessageDialog(null, "Active Users List");
     }
 
     private void openSettingsDialog() {
@@ -212,34 +187,6 @@ public class ClientGUIFrame {
             System.err.println("Error updating username in server: " + e.getMessage());
         }
     }
-
-    /*private void switchTheme(JDialog settingsDialog) {
-        String[] options = {"Light Mode", "Dark Mode"};
-        int choice = JOptionPane.showOptionDialog(settingsDialog, "Choose Theme", "Switch Theme", JOptionPane.DEFAULT_OPTION, JOptionPane.INFORMATION_MESSAGE, null, options, options[0]);
-
-        if (choice == 0) {
-            isDarkMode = false;
-            updateTheme((JFrame) SwingUtilities.getRoot(messageArea));
-        } else {
-            isDarkMode = true;
-            updateTheme((JFrame) SwingUtilities.getRoot(messageArea));
-        }
-    }
-
-    private void updateTheme(JFrame frame) {
-        if (isDarkMode) {
-            UIManager.put("Panel.background", Color.DARK_GRAY);
-            messageArea.setBackground(Color.BLACK);
-            inputField.setBackground(Color.BLACK);
-            inputField.setForeground(Color.WHITE);
-        } else {
-            UIManager.put("Panel.background", Color.WHITE);
-            messageArea.setBackground(Color.WHITE);
-            inputField.setBackground(Color.WHITE);
-            inputField.setForeground(Color.BLACK);
-        }
-        SwingUtilities.updateComponentTreeUI(frame);
-    }*/
 
     private void sendMessage() {
         try {
