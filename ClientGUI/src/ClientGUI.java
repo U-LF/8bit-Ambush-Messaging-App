@@ -13,6 +13,4 @@ public class ClientGUI {
             dashboard.showDashboard();
         });
     }
-
-
 }

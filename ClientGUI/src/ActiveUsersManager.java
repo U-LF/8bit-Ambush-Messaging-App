@@ -1,13 +1,18 @@
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+//import ThemeManagerDashboard;
+
 
 public class ActiveUsersManager {
 
-    // Method to create the Active Users button
-    public JButton createActiveUsersButton() {
+    private ThemeManagerDashboard themeManager;
+
+    public ActiveUsersManager(ThemeManagerDashboard themeManager) {
+        this.themeManager = themeManager;
+    }
+
+    public JButton createActiveUsersButton(JFrame frame) {
         try {
             URL activeUsersUrl = new URL("https://www.voxco.com/wp-content/uploads/2022/03/DAILY-ACTIVE-USERS1.png");
             ImageIcon activeUsersIcon = new ImageIcon(activeUsersUrl);
@@ -17,34 +22,34 @@ public class ActiveUsersManager {
             activeUsersIcon = new ImageIcon(resizedImg);
 
             JButton activeUsersButton = new JButton(activeUsersIcon);
-            activeUsersButton.setBorderPainted(false);
-            activeUsersButton.setBorder(null);
-            activeUsersButton.setContentAreaFilled(false);
-            activeUsersButton.setFocusPainted(false);
-            activeUsersButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    showActiveUsersDialog();
-                }
-            });
+            styleButton(activeUsersButton);
+            activeUsersButton.addActionListener(event -> showActiveUsersDialog(frame)); // Use 'event' here
             return activeUsersButton;
-        } catch (Exception e) {
-            System.err.println("Error loading active users icon: " + e.getMessage());
-            return new JButton("Active Users");
+        } catch (Exception exception) { // Renamed to 'exception'
+            System.err.println("Error loading active users icon: " + exception.getMessage());
+            JButton activeUsersButton = new JButton("Active Users");
+            styleButton(activeUsersButton);
+            activeUsersButton.addActionListener(event -> showActiveUsersDialog(frame)); // Use 'event' here
+            return activeUsersButton;
         }
     }
 
-    // Method to show Active Users dialog
-    public void showActiveUsersDialog() {
-        // Creating a list of active users
+    public void showActiveUsersDialog(JFrame frame) {
         String[] activeUsers = {"Hafiz Sohaib", "Abdullah", "Khuzaima", "BugFixer"};
-
-        // Displaying the active users in a dialog
         StringBuilder userList = new StringBuilder("Active Users:\n");
         for (String user : activeUsers) {
             userList.append(user).append("\n");
         }
 
-        JOptionPane.showMessageDialog(null, userList.toString(), "Active Users List", JOptionPane.INFORMATION_MESSAGE);
+        JOptionPane.showMessageDialog(frame, userList.toString(), "Active Users List", JOptionPane.INFORMATION_MESSAGE);
+    }
+
+    private void styleButton(JButton button) {
+        button.setBorderPainted(false);
+        button.setBorder(null);
+        button.setContentAreaFilled(false);
+        button.setFocusPainted(false);
+        button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+        themeManager.updateButtonStyle(button);
     }
 }

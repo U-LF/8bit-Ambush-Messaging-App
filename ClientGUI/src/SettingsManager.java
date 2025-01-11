@@ -1,4 +1,3 @@
-// File: SettingsManager.java
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
@@ -35,19 +34,24 @@ public class SettingsManager {
         settingsDialog.setLayout(new GridLayout(3, 1));
 
         JButton usernameButton = new JButton("Change Username");
-        usernameButton.addActionListener(e -> clientGUIFrame.changeUsername(settingsDialog));
+        usernameButton.addActionListener(e -> {
+            System.out.println("Opening settings dialog to change username...");
+            clientGUIFrame.changeUsername(settingsDialog);  // Trigger changeUsername
+        });
         settingsDialog.add(usernameButton);
 
-        JButton themeButton = new JButton("Switch Theme");
+        /*JButton themeButton = new JButton("Switch Theme");
         themeButton.addActionListener(e -> {
-            // Call the switchTheme method from ThemeManager
-            clientGUIFrame.getThemeManager().switchTheme(settingsDialog,
-                    (JFrame) SwingUtilities.getRoot(clientGUIFrame.getMessageArea()),
-                    clientGUIFrame.getMessageArea(), clientGUIFrame.getInputField());
+            // Fix method call to pass JFrame instead of JDialog
+            clientGUIFrame.getThemeManager().switchTheme(
+                    clientGUIFrame,  // Pass JFrame here
+                    clientGUIFrame.getMessageArea(),
+                    clientGUIFrame.getInputField()
+            );
         });
         settingsDialog.add(themeButton);
 
-        settingsDialog.setLocationRelativeTo(null);
-        settingsDialog.setVisible(true);
+        settingsDialog.setLocationRelativeTo(clientGUIFrame);  // Position dialog relative to frame
+        settingsDialog.setVisible(true);  // Make the dialog visible*/
     }
 }

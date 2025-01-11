@@ -2,24 +2,24 @@ import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 
-public class ClientGUIFrame {
+public class ClientGUIFrame extends Component {
     private final DataOutputStream outToServer;
     private final JTextArea messageArea;
     private final JTextField inputField;
     private String username = "Anonymous"; // Default username
-    private final ThemeManager themeManager;
+    private ThemeManagerDashboard themeManager; // Removed redundant initialization
     private final ActiveUsersManager activeUsersManager;
     private final SettingsManager settingsManager;
-    private final MessageAppender messageAppender; // Add MessageAppender
+    private final MessageAppender messageAppender;
 
     public ClientGUIFrame(DataOutputStream outToServer) {
         this.outToServer = outToServer;
+        this.themeManager = new ThemeManagerDashboard(); // Correct initialization
         this.messageArea = new JTextArea();
         this.inputField = new RoundedTextField(20);
-        this.themeManager = new ThemeManager(false);
-        this.activeUsersManager = new ActiveUsersManager();
+        this.activeUsersManager = new ActiveUsersManager(themeManager);
         this.settingsManager = new SettingsManager();
-        this.messageAppender = new MessageAppender(messageArea); // Initialize MessageAppender
+        this.messageAppender = new MessageAppender(messageArea);
     }
 
     public void showGUI() {
@@ -29,13 +29,13 @@ public class ClientGUIFrame {
 
         frame.setLayout(new BorderLayout());
 
-        JPanel messagePanel = MessagePanelFactory.createMessagePanel(messageArea);
+        JPanel messagePanel = new MessagePanelFactory(themeManager).createMessagePanel(messageArea);
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputField.setBackground(Color.LIGHT_GRAY);
         inputField.setForeground(Color.BLACK);
 
-        JButton sendButton = SendButtonFactory.createSendButton(); // Use the new SendButtonFactory
-        JButton activeUsersButton = activeUsersManager.createActiveUsersButton();
+        JButton sendButton = SendButtonFactory.createSendButton();
+        JButton activeUsersButton = activeUsersManager.createActiveUsersButton(frame);
         JButton settingsButton = settingsManager.createSettingsButton(this);
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -63,10 +63,8 @@ public class ClientGUIFrame {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        sendButton.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username)); // Use the new MessageSender
+        sendButton.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username));
         inputField.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username));
-
-        themeManager.updateTheme(frame, messageArea, inputField);
     }
 
     void changeUsername(JDialog settingsDialog) {
@@ -85,13 +83,8 @@ public class ClientGUIFrame {
         }
     }
 
-    // Delegate appendMessage to MessageAppender
     public void appendMessage(String message) {
         messageAppender.appendMessage(message);
-    }
-
-    public ThemeManager getThemeManager() {
-        return themeManager;
     }
 
     public JTextArea getMessageArea() {
@@ -100,5 +93,9 @@ public class ClientGUIFrame {
 
     public JTextField getInputField() {
         return inputField;
+    }
+
+    public ThemeManagerDashboard getThemeManager() {
+        return themeManager;
     }
 }

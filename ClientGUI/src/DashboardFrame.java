@@ -1,48 +1,50 @@
+/**
+ * The refactored code now includes a dedicated ThemeManager class to manage themes. The DashboardFrame class
+ * delegates the responsibility of theme management to ThemeManager.
+ */
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
 import java.net.*;
 
-import javax.swing.border.Border;
-
-
 public class DashboardFrame {
-
     public void showDashboard() {
         // Create the main dashboard frame
         JFrame dashboardFrame = new JFrame("Dashboard");
         dashboardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        dashboardFrame.setMinimumSize(new Dimension(500, 400));  // Set a minimum size
+        dashboardFrame.setMinimumSize(new Dimension(500, 400));
         dashboardFrame.setPreferredSize(new Dimension(700, 500));
 
         // Set the background image
         String imageUrl = "https://img.freepik.com/free-photo/photorealistic-view-wild-bear-its-natural-environment_23-2151427243.jpg";
         try {
-            ImageIcon backgroundImage = new ImageIcon(new URL(imageUrl)); // Load image from URL
+            ImageIcon backgroundImage = new ImageIcon(new URL(imageUrl));
             JLabel backgroundLabel = new JLabel(backgroundImage);
             backgroundLabel.setLayout(new BorderLayout());
-            dashboardFrame.setContentPane(backgroundLabel);  // Set background image
+            dashboardFrame.setContentPane(backgroundLabel);
 
-            // Dynamic resizing of the background image on window resize
             dashboardFrame.addComponentListener(new ComponentAdapter() {
                 @Override
                 public void componentResized(ComponentEvent evt) {
-                    // Resize background image based on window size
                     ImageIcon resizedIcon = new ImageIcon(backgroundImage.getImage().getScaledInstance(
                             dashboardFrame.getWidth(), dashboardFrame.getHeight(), Image.SCALE_SMOOTH));
                     backgroundLabel.setIcon(resizedIcon);
                 }
             });
-
         } catch (MalformedURLException e) {
             System.err.println("Error loading background image: " + e.getMessage());
         }
 
         dashboardFrame.setLayout(new GridBagLayout());
 
-        // Create neon-style buttons
-        JButton connectButton = createStyledButton("Connect to Server", e -> {
+        // Initialize ThemeManager
+        ThemeManagerDashboard themeManager = new ThemeManagerDashboard();
+        themeManager.updateTheme(dashboardFrame); // Apply the initial theme
+
+        // Create buttons
+        JButton connectButton = createStyledButton("Connect to ChatRoom", e -> {
             dashboardFrame.dispose();
             ClientConnection.connectToServer();
         });
@@ -52,14 +54,21 @@ public class DashboardFrame {
             openConfigEditor(dashboardFrame);
         });
 
-        // Panel for buttons with centered layout
+        JButton aboutButton = createStyledButton("About", e -> {
+            openAboutDialog(dashboardFrame);
+        });
+
+        JButton themeButton = createStyledButton("Theme", e -> {
+            themeManager.switchTheme(dashboardFrame);
+        });
+
+        // Panel for buttons
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         buttonPanel.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(30, 10, 30, 10); // Padding between buttons
+        gbc.insets = new Insets(30, 10, 30, 10);
 
-        // Add buttons to the panel
         gbc.gridx = 0;
         gbc.gridy = 0;
         buttonPanel.add(connectButton, gbc);
@@ -67,22 +76,28 @@ public class DashboardFrame {
         gbc.gridy++;
         buttonPanel.add(configButton, gbc);
 
-        // Add the button panel to the frame
+        gbc.gridy++;
+        buttonPanel.add(aboutButton, gbc);
+
+        gbc.gridy++;
+        buttonPanel.add(themeButton, gbc);
+
         dashboardFrame.add(buttonPanel, gbc);
 
-        // Enable dynamic resizing of button fonts
+        // Dynamic resizing of fonts
         dashboardFrame.addComponentListener(new ComponentAdapter() {
             @Override
             public void componentResized(ComponentEvent evt) {
                 int newFontSize = Math.max(20, dashboardFrame.getWidth() / 35);
                 connectButton.setFont(new Font("Arial", Font.BOLD, newFontSize));
                 configButton.setFont(new Font("Arial", Font.BOLD, newFontSize));
+                aboutButton.setFont(new Font("Arial", Font.BOLD, newFontSize));
+                themeButton.setFont(new Font("Arial", Font.BOLD, newFontSize));
             }
         });
 
-        // Set frame properties
         dashboardFrame.pack();
-        dashboardFrame.setLocationRelativeTo(null); // Center on screen
+        dashboardFrame.setLocationRelativeTo(null);
         dashboardFrame.setVisible(true);
     }
 
@@ -91,44 +106,25 @@ public class DashboardFrame {
         button.setFocusPainted(false);
         button.setContentAreaFilled(false);
         button.setOpaque(true);
-
-        // Initial styles
         button.setBackground(Color.BLACK);
         button.setForeground(Color.WHITE);
         button.setFont(new Font("Arial", Font.BOLD, 24));
         button.setBorder(BorderFactory.createLineBorder(Color.CYAN, 3));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
-        // Add hover effects
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(0, 0, 0));
-                button.setForeground(new Color(0, 255, 255));
-                button.setBorder(BorderFactory.createLineBorder(new Color(0, 255, 255), 4));
+                button.setBackground(Color.GRAY);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
                 button.setBackground(Color.BLACK);
-                button.setForeground(Color.WHITE);
-                button.setBorder(BorderFactory.createLineBorder(Color.CYAN, 3));
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                button.setBackground(new Color(30, 30, 30));
-            }
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                button.setBackground(Color.BLACK);
             }
         });
 
-        // Add action listener
         button.addActionListener(actionListener);
-
         return button;
     }
 
@@ -145,7 +141,6 @@ public class DashboardFrame {
         JButton saveButton = new JButton("Save");
         configFrame.add(saveButton, BorderLayout.SOUTH);
 
-        // Load current content of the config file
         try (BufferedReader reader = new BufferedReader(new FileReader("Ip and port.txt"))) {
             String line;
             while ((line = reader.readLine()) != null) {
@@ -155,13 +150,12 @@ public class DashboardFrame {
             JOptionPane.showMessageDialog(configFrame, "Error loading config file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
         }
 
-        // Save edited content to the file
         saveButton.addActionListener(e -> {
             try (BufferedWriter writer = new BufferedWriter(new FileWriter("Ip and port.txt"))) {
                 writer.write(configTextArea.getText());
                 JOptionPane.showMessageDialog(configFrame, "Config saved successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
                 configFrame.dispose();
-                dashboardFrame.setVisible(true); // Show dashboard again
+                dashboardFrame.setVisible(true);
             } catch (IOException ex) {
                 JOptionPane.showMessageDialog(configFrame, "Error saving config file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
             }
@@ -170,4 +164,40 @@ public class DashboardFrame {
         configFrame.setLocationRelativeTo(null);
         configFrame.setVisible(true);
     }
+
+    private void openAboutDialog(JFrame dashboardFrame) {
+        JDialog aboutDialog = new JDialog(dashboardFrame, "About", true);
+        aboutDialog.setSize(300, 200);
+        aboutDialog.setLayout(new FlowLayout());
+
+        JButton developersButton = new JButton("Developers Team");
+        JButton faqsButton = new JButton("FAQs");
+        JButton visionButton = new JButton("Vision");
+
+        developersButton.addActionListener(e -> showDeveloperInfo());
+        faqsButton.addActionListener(e -> showFaqsInfo());
+        visionButton.addActionListener(e -> showVisionInfo());
+
+        aboutDialog.add(developersButton);
+        aboutDialog.add(faqsButton);
+        aboutDialog.add(visionButton);
+
+        aboutDialog.setLocationRelativeTo(dashboardFrame);
+        aboutDialog.setVisible(true);
+    }
+
+    private void showDeveloperInfo() {
+        JOptionPane.showMessageDialog(null, "Developed by the Messaging App Team.");
+    }
+
+    private void showFaqsInfo() {
+        JOptionPane.showMessageDialog(null, "FAQs: 1. How to use? 2. Troubleshooting...");
+    }
+
+    private void showVisionInfo() {
+        JOptionPane.showMessageDialog(null, "Our vision is to create an intuitive messaging platform.");
+    }
 }
+
+
+

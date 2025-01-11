@@ -3,6 +3,10 @@ import java.awt.*;
 import java.net.URL;
 
 public class MessagePanelFactory {
+
+    public MessagePanelFactory(ThemeManagerDashboard themeManager) {
+    }
+
     public static JPanel createMessagePanel(JTextArea messageArea) {
         JPanel panel = new JPanel(new BorderLayout()) {
             private Image backgroundImage;
