@@ -6,20 +6,20 @@ import java.net.URL;
 
 public class ClientGUIFrame {
     private final DataOutputStream outToServer;
-    private JTextArea messageArea;
-    private JTextField inputField;
+    private final JTextArea messageArea;
+    private final JTextField inputField;
     private String username = "Anonymous"; // Default username
-    private boolean isDarkMode = false; // Flag to toggle between Dark and Light mode
-    private ThemeManager themeManager;
-    private ActiveUsersManager activeUsersManager; // New ActiveUsersManager instance
-    private SettingsManager settingsManager; // New SettingsManager instance
+    private final ThemeManager themeManager;
+    private final ActiveUsersManager activeUsersManager;
+    private final SettingsManager settingsManager;
 
     public ClientGUIFrame(DataOutputStream outToServer) {
-
         this.outToServer = outToServer;
-        this.themeManager = new ThemeManager(isDarkMode);
-        this.activeUsersManager = new ActiveUsersManager(); // Initialize ActiveUsersManager
-        this.settingsManager = new SettingsManager(); // Initialize SettingsManager
+        this.messageArea = new JTextArea();
+        this.inputField = new RoundedTextField(20);
+        this.themeManager = new ThemeManager(false);
+        this.activeUsersManager = new ActiveUsersManager();
+        this.settingsManager = new SettingsManager();
     }
 
     public void showGUI() {
@@ -29,26 +29,25 @@ public class ClientGUIFrame {
 
         frame.setLayout(new BorderLayout());
 
-        JPanel messagePanel = createMessagePanel();
+        JPanel messagePanel = MessagePanelFactory.createMessagePanel(messageArea);
         JPanel inputPanel = new JPanel(new BorderLayout());
-        inputField = new RoundedTextField(20);
         inputField.setBackground(Color.LIGHT_GRAY);
         inputField.setForeground(Color.BLACK);
 
-        JButton sendButton = createSendButton();
-        JButton activeUsersButton = activeUsersManager.createActiveUsersButton(); // Use method from ActiveUsersManager
-        JButton settingsButton = settingsManager.createSettingsButton(this); // Use method from SettingsManager
+        JButton sendButton = SendButtonFactory.createSendButton(); // Use the new SendButtonFactory
+        JButton activeUsersButton = activeUsersManager.createActiveUsersButton();
+        JButton settingsButton = settingsManager.createSettingsButton(this);
 
         JPanel topPanel = new JPanel(new BorderLayout());
         topPanel.setPreferredSize(new Dimension(frame.getWidth(), 80));
-        topPanel.setBackground(new Color(70, 130, 180)); // Steel Blue background
+        topPanel.setBackground(new Color(70, 130, 180));
 
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        leftPanel.setOpaque(false); // Transparent background
+        leftPanel.setOpaque(false);
         leftPanel.add(settingsButton);
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        rightPanel.setOpaque(false); // Transparent background
+        rightPanel.setOpaque(false);
         rightPanel.add(activeUsersButton);
 
         topPanel.add(leftPanel, BorderLayout.WEST);
@@ -64,73 +63,11 @@ public class ClientGUIFrame {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
-        sendButton.addActionListener(e -> sendMessage());
-        inputField.addActionListener(e -> sendMessage());
-
-        frame.addComponentListener(new ComponentAdapter() {
-            @Override
-            public void componentResized(ComponentEvent e) {
-                resizeButtons(frame);
-            }
-        });
+        sendButton.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username)); // Use the new MessageSender
+        inputField.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username));
 
         themeManager.updateTheme(frame, messageArea, inputField);
     }
-
-    private JPanel createMessagePanel() {
-        JPanel panel = new JPanel(new BorderLayout()) {
-            private Image backgroundImage;
-
-            {
-                try {
-                    URL imageUrl = new URL("https://www.shutterstock.com/image-vector/social-media-sketch-vector-seamless-600nw-1660950727.jpg");
-                    backgroundImage = new ImageIcon(imageUrl).getImage();
-                } catch (Exception e) {
-                    System.err.println("Error loading background image: " + e.getMessage());
-                }
-            }
-
-            @Override
-            protected void paintComponent(Graphics g) {
-                super.paintComponent(g);
-                if (backgroundImage != null) {
-                    g.drawImage(backgroundImage, 0, 0, getWidth(), getHeight(), this);
-                }
-            }
-        };
-
-        messageArea = new JTextArea();
-        messageArea.setEditable(false);
-        messageArea.setOpaque(false); // Make the text area transparent
-        messageArea.setForeground(Color.BLACK);
-        JScrollPane scrollPane = new JScrollPane(messageArea);
-        scrollPane.setOpaque(false);
-        scrollPane.getViewport().setOpaque(false);
-
-        panel.add(scrollPane, BorderLayout.CENTER);
-        return panel;
-    }
-
-    private JButton createSendButton() {
-        try {
-            URL sendButtonUrl = new URL("https://cdn-icons-png.freepik.com/256/4458/4458496.png?semt=ais_hybrid");
-            ImageIcon sendIcon = new ImageIcon(sendButtonUrl);
-            Image img = sendIcon.getImage();
-            int newSize = 40;
-            Image resizedImg = img.getScaledInstance(newSize, newSize, Image.SCALE_SMOOTH);
-            sendIcon = new ImageIcon(resizedImg);
-
-            JButton sendButton = new JButton(sendIcon);
-            sendButton.setPreferredSize(new Dimension(newSize, newSize));
-            sendButton.setContentAreaFilled(false);
-            sendButton.setFocusPainted(false);
-            return sendButton;
-        } catch (Exception e) {
-            System.err.println("Error loading send button icon: " + e.getMessage());
-            return new JButton("Send");
-        }
-    }
-
 
     void changeUsername(JDialog settingsDialog) {
         String newUsername = JOptionPane.showInputDialog(settingsDialog, "Enter new username:", username);
@@ -148,45 +85,19 @@ public class ClientGUIFrame {
         }
     }
 
-    private void sendMessage() {
-        try {
-            String message = inputField.getText().trim();
-            if (!message.isEmpty()) {
-                appendMessage(username + ": " + message + "\n");
-                outToServer.writeBytes(message + "\n");
-                inputField.setText("");
-            }
-        } catch (IOException e) {
-            appendMessage("Error sending message: " + e.getMessage() + "\n");
-        }
-    }
-
     public void appendMessage(String message) {
-        messageArea.append(message);
+        SwingUtilities.invokeLater(() -> messageArea.append(message + "\n"));
     }
 
-    private void resizeButtons(JFrame frame) {
-        int newSize = Math.min(frame.getWidth(), frame.getHeight()) / 15;
-        for (Component comp : frame.getComponents()) {
-            if (comp instanceof JButton) {
-                comp.setPreferredSize(new Dimension(newSize, newSize));
-            }
-        }
-    }
-    // Getter for themeManager
     public ThemeManager getThemeManager() {
         return themeManager;
     }
 
-    // Getter for messageArea
     public JTextArea getMessageArea() {
         return messageArea;
     }
 
-    // Getter for inputField
     public JTextField getInputField() {
         return inputField;
     }
 }
-
-
