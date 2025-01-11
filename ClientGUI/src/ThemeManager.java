@@ -48,7 +48,7 @@ class ThemeManagerDashboard {
         themeDialog.setVisible(true);
     }
 
-    public void updateTheme(JFrame frame) {
+    public void updateTheme(Component component) {
         Color backgroundColor;
         Color foregroundColor;
 
@@ -81,9 +81,10 @@ class ThemeManagerDashboard {
         UIManager.put("TextField.background", backgroundColor);
         UIManager.put("TextField.foreground", foregroundColor);
 
-        // Apply the updated theme to all components
-        SwingUtilities.updateComponentTreeUI(frame);
+        // Apply the updated theme to all components (whether JFrame or JDialog)
+        SwingUtilities.updateComponentTreeUI(component);
     }
+
     public void updateButtonStyle(JButton button) {
         button.setBackground(UIManager.getColor("Button.background"));
         button.setForeground(UIManager.getColor("Button.foreground"));

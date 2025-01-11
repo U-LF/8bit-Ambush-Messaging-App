@@ -36,6 +36,8 @@ public class ClientGUIFrame extends Component {
 
         JButton sendButton = SendButtonFactory.createSendButton();
         JButton activeUsersButton = activeUsersManager.createActiveUsersButton(frame);
+
+        // Create settings button using SettingsManager
         JButton settingsButton = settingsManager.createSettingsButton(this);
 
         JPanel topPanel = new JPanel(new BorderLayout());
@@ -44,7 +46,7 @@ public class ClientGUIFrame extends Component {
 
         JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         leftPanel.setOpaque(false);
-        leftPanel.add(settingsButton);
+        leftPanel.add(settingsButton); // Add settings button to the panel
 
         JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
         rightPanel.setOpaque(false);
@@ -66,6 +68,7 @@ public class ClientGUIFrame extends Component {
         sendButton.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username));
         inputField.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username));
     }
+
 
     void changeUsername(JDialog settingsDialog) {
         String newUsername = JOptionPane.showInputDialog(settingsDialog, "Enter new username:", username);

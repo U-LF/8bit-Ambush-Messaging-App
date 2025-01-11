@@ -3,7 +3,6 @@ import java.awt.*;
 import java.net.URL;
 
 public class SettingsManager {
-
     // Method to create the settings button
     public JButton createSettingsButton(ClientGUIFrame clientGUIFrame) {
         try {
@@ -40,18 +39,7 @@ public class SettingsManager {
         });
         settingsDialog.add(usernameButton);
 
-        /*JButton themeButton = new JButton("Switch Theme");
-        themeButton.addActionListener(e -> {
-            // Fix method call to pass JFrame instead of JDialog
-            clientGUIFrame.getThemeManager().switchTheme(
-                    clientGUIFrame,  // Pass JFrame here
-                    clientGUIFrame.getMessageArea(),
-                    clientGUIFrame.getInputField()
-            );
-        });
-        settingsDialog.add(themeButton);
-
         settingsDialog.setLocationRelativeTo(clientGUIFrame);  // Position dialog relative to frame
-        settingsDialog.setVisible(true);  // Make the dialog visible*/
+        settingsDialog.setVisible(true);  // Make the dialog visible
     }
 }

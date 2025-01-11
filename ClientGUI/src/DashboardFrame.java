@@ -62,26 +62,37 @@ public class DashboardFrame {
             themeManager.switchTheme(dashboardFrame);
         });
 
+        // Create P2P button
+        JButton p2pButton = createStyledButton("P2P", e -> {
+            openP2PDialog(dashboardFrame, themeManager);  // Open the P2P dialog with theme applied
+        });
+
+
         // Panel for buttons
         JPanel buttonPanel = new JPanel(new GridBagLayout());
         buttonPanel.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(30, 10, 30, 10);
+        gbc.insets = new Insets(10, 10, 10, 10); // Padding between buttons
 
-        gbc.gridx = 0;
-        gbc.gridy = 0;
+        // Add P2P button to the button panel
+        gbc.gridx = 0; // All buttons in the first column
+        gbc.gridy = 0; // First row
+        buttonPanel.add(p2pButton, gbc);
+
+        gbc.gridy++; // Move to the next row
         buttonPanel.add(connectButton, gbc);
 
-        gbc.gridy++;
+        gbc.gridy++; // Move to the next row
         buttonPanel.add(configButton, gbc);
 
-        gbc.gridy++;
+        gbc.gridy++; // Move to the next row
         buttonPanel.add(aboutButton, gbc);
 
-        gbc.gridy++;
+        gbc.gridy++; // Move to the next row
         buttonPanel.add(themeButton, gbc);
 
+        // Add the button panel to the main frame
         dashboardFrame.add(buttonPanel, gbc);
 
         // Dynamic resizing of fonts
@@ -100,6 +111,7 @@ public class DashboardFrame {
         dashboardFrame.setLocationRelativeTo(null);
         dashboardFrame.setVisible(true);
     }
+
 
     private JButton createStyledButton(String text, ActionListener actionListener) {
         JButton button = new JButton(text);
@@ -185,6 +197,29 @@ public class DashboardFrame {
         aboutDialog.setLocationRelativeTo(dashboardFrame);
         aboutDialog.setVisible(true);
     }
+    private void openP2PDialog(JFrame dashboardFrame, ThemeManagerDashboard themeManager) {
+        // Create P2P dialog
+        JDialog p2pDialog = new JDialog(dashboardFrame, "P2P Chat", true);
+        p2pDialog.setSize(400, 200);
+        p2pDialog.setLayout(new BorderLayout());
+
+        // Create a label to display the P2P message
+        JLabel messageLabel = new JLabel("Welcome to P2P Option", JLabel.CENTER);
+        messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
+
+        // Apply the theme to the P2P dialog
+        themeManager.updateTheme(p2pDialog); // Reuse the updateTheme method to apply the selected theme to the dialog
+        messageLabel.setForeground(UIManager.getColor("Button.foreground")); // Apply the correct text color based on the theme
+
+        // Add the label to the dialog
+        p2pDialog.add(messageLabel, BorderLayout.CENTER);
+
+        // Show the dialog
+        p2pDialog.setLocationRelativeTo(dashboardFrame);  // Center it relative to the main frame
+        p2pDialog.setVisible(true);
+    }
+
+
 
     private void showDeveloperInfo() {
         JOptionPane.showMessageDialog(null, "Developed by the Messaging App Team.");
