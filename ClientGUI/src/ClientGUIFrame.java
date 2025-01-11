@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 import java.io.*;
-import java.net.URL;
 
 public class ClientGUIFrame {
     private final DataOutputStream outToServer;
@@ -12,6 +10,7 @@ public class ClientGUIFrame {
     private final ThemeManager themeManager;
     private final ActiveUsersManager activeUsersManager;
     private final SettingsManager settingsManager;
+    private final MessageAppender messageAppender; // Add MessageAppender
 
     public ClientGUIFrame(DataOutputStream outToServer) {
         this.outToServer = outToServer;
@@ -20,6 +19,7 @@ public class ClientGUIFrame {
         this.themeManager = new ThemeManager(false);
         this.activeUsersManager = new ActiveUsersManager();
         this.settingsManager = new SettingsManager();
+        this.messageAppender = new MessageAppender(messageArea); // Initialize MessageAppender
     }
 
     public void showGUI() {
@@ -85,8 +85,9 @@ public class ClientGUIFrame {
         }
     }
 
+    // Delegate appendMessage to MessageAppender
     public void appendMessage(String message) {
-        SwingUtilities.invokeLater(() -> messageArea.append(message + "\n"));
+        messageAppender.appendMessage(message);
     }
 
     public ThemeManager getThemeManager() {
