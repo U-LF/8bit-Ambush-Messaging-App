@@ -1,129 +1,193 @@
+/**
+ * Client side P2P chat
+ *
+ * Creates UDP connection to server
+ * Gets IP and Port
+ * Creates TCP connection with peer
+ * listens on port
+ *
+ */
+
 import java.io.*;
 import java.net.*;
+import java.util.*;
+import java.text.*;
 
-public class p2pClient {
-    private static final String SERVER_ADDRESS = "203.101.178.27";
-    private static final int SERVER_PORT = 2456;
+public class p2pClient extends Thread{
 
-    public static void main(String[] args) {
-        try (Socket socket = new Socket(SERVER_ADDRESS, SERVER_PORT);
-             BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-             PrintWriter out = new PrintWriter(socket.getOutputStream(), true);
-             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in))) {
+    String activity;
+    static String myIp;
+    static int myPort;
+    static String peerIp;
+    static int peerPort;
 
-            System.out.println("Connected to the server at " + SERVER_ADDRESS + ":" + SERVER_PORT);
+    public p2pClient(String activity){
+        this.activity = activity;
+        this.myIp = "";
+        this.peerIp = "";
+    }
 
-            // Start a separate thread to handle incoming messages from the server
-            new Thread(() -> {
-                try {
-                    String serverMessage;
-                    while ((serverMessage = in.readLine()) != null) {
-                        System.out.println(serverMessage);
-                    }
-                } catch (IOException e) {
-                    System.err.println("Error reading from server: " + e.getMessage());
-                }
-            }).start();
-
-            String clientName = null;
-
-            while (true) {
-                System.out.print("Enter your input: ");
-                String userCommand = userInput.readLine();
-
-                if (userCommand == null || userCommand.equalsIgnoreCase("exit")) {
-                    System.out.println("Exiting...");
-                    break;
-                }
-
-                if (clientName == null && userCommand.trim().isEmpty()) {
-                    System.out.println("Please enter your name to proceed.");
-                    continue;
-                }
-
-                if (clientName == null) {
-                    clientName = userCommand;
-                }
-
-                out.println(userCommand);
-
-                if (userCommand.startsWith("CONNECT")) {
-                    String response = in.readLine(); // Blocking call to get server response
-                    if (response != null && response.contains("wants to connect with you")) {
-                        System.out.println(response); // Print the request message
-
-                        System.out.print("Do you want to accept the connection? (yes/no): ");
-                        String userResponse = userInput.readLine();
-
-                        if ("yes".equalsIgnoreCase(userResponse)) {
-                            out.println("ACCEPT"); // Send acceptance message to the server
-
-                            // The server should then send the address and port of the requesting client
-                            String connectInfo = in.readLine();
-                            if (connectInfo != null && connectInfo.startsWith("Connecting you to")) {
-                                try {
-                                    String[] parts = connectInfo.split(" ");
-                                    if (parts.length >= 4 && parts[3].contains(":")) {
-                                        String[] addressParts = parts[3].split(":");
-                                        String targetAddress = addressParts[0];
-                                        int targetPort = Integer.parseInt(addressParts[1]);
-
-                                        // Start the direct connection
-                                        startDirectConnection(targetAddress, targetPort, clientName);
-                                    } else {
-                                        System.err.println("Invalid connection info from server.");
-                                    }
-                                } catch (NumberFormatException | ArrayIndexOutOfBoundsException e) {
-                                    System.err.println("Error parsing connection info: " + e.getMessage());
-                                }
-                            } else {
-                                System.err.println("Failed to receive connection details.");
-                            }
-                        } else {
-                            out.println("REJECT"); // Send rejection message to the server
-                            System.out.println("Connection request rejected.");
-                        }
-                    } else {
-                        System.err.println("Unexpected response: " + response);
-                    }
-                }
+    /**************************************************
+     * runs the threads to listen to the port and talk to the peer
+     */
+    public void run(){
+        try{
+            if(activity == "listen"){
+                peerListen();
+            }else{
+                peerSend();
             }
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+    }
+
+    public static void main(String[] args) throws Exception {
+        //String serverName = "teamone.onthewifi.com";
+        String serverName = "203.101.178.27";
+        int port = 54545;
+
+        // prepare Socket and data to send
+        DatagramSocket clientSocket = new DatagramSocket();
+        //System.out.println(clientSocket.isBound());
+        clientSocket.setReuseAddress(true);
+
+
+        byte[] sendData = "Hello".getBytes();
+        System.out.println("sending Hello to server");
+
+        // send Data to Server
+        DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName(serverName), port);
+        clientSocket.send(sendPacket);
+
+        // receive Data
+        DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
+        clientSocket.receive(receivePacket);
+        System.out.println("received data from server");
+        clientSocket.close();
+        // Convert Response to IP and Port
+        String response = new String(receivePacket.getData());
+        String[] splitResponse = response.split(":");
+        myIp = splitResponse[0];
+        myPort = Integer.parseInt(splitResponse[1]);
+        peerIp = splitResponse[2];
+        peerPort = Integer.parseInt(splitResponse[3]);
+        System.out.println("my Info: " + myIp + ":" + myPort );
+        System.out.println("peer Info: " + peerIp + ":" + peerPort );
+        System.out.println("\n\n");
+
+        //clientSocket.bind(myPort);
+        //clientSocket.close();
+
+        //listen to port
+        Thread listen = new p2pClient("listen");
+        listen.start();
+
+        Thread.sleep(2000);
+
+        //send datagram
+        Thread send = new p2pClient("send");
+        send.start();
+
+        //waits for thread to end
+        listen.join();
+        send.join();
+    }//main
+
+    /**************************************************
+     * sends the p2p chat
+     */
+    private static void peerSend() throws SocketException, UnknownHostException, IOException {
+        try {
+            // Try to connect directly to peer using TCP
+            Socket mySoc = new Socket();
+            mySoc.setReuseAddress(true);
+            mySoc.connect(new InetSocketAddress(peerIp, peerPort), 5000);  // 5000ms timeout
+            System.out.println("Direct connection established with peer: " + peerIp + ":" + peerPort);
+
+            // Proceed with the regular peer communication
+            DataOutputStream out = new DataOutputStream(mySoc.getOutputStream());
+            DataInputStream in = new DataInputStream(mySoc.getInputStream());
+
+            String msg = getTime() + "\t" + myPort + ": Can you hear me?";
+            out.writeUTF(msg);
+            System.out.println(msg);
+
+            String newMsg = in.readUTF();
+            System.out.println(newMsg + "\n");
+
+            mySoc.close();
+
+		/*} catch (SocketException | UnknownHostException e) {
+			System.out.println("Socket exception occurred: " + e.getMessage());*/
         } catch (IOException e) {
-            System.err.println("Connection error: " + e.getMessage());
+            System.out.println("IOException occurred: " + e.getMessage());
+            System.out.println("Direct connection failed, trying TURN server...");
+
+            // If direct connection fails, fall back to TURN server (UDP)
+            DatagramSocket turnSocket = new DatagramSocket();
+            byte[] sendData = ("TURN:" + peerIp + ":" + peerPort).getBytes();
+            DatagramPacket sendPacket = new DatagramPacket(sendData, sendData.length, InetAddress.getByName("203.101.178.27"), 54546);
+            turnSocket.send(sendPacket);
+
+            DatagramPacket receivePacket = new DatagramPacket(new byte[1024], 1024);
+            turnSocket.receive(receivePacket);
+            String response = new String(receivePacket.getData(), 0, receivePacket.getLength());
+            System.out.println("Received message via TURN server: " + response);
+
+            turnSocket.close();
         }
     }
 
-    private static void startDirectConnection(String targetAddress, int targetPort, String clientName) {
-        try (Socket directSocket = new Socket(targetAddress, targetPort);
-             PrintWriter out = new PrintWriter(directSocket.getOutputStream(), true);
-             BufferedReader in = new BufferedReader(new InputStreamReader(directSocket.getInputStream()));
-             BufferedReader userInput = new BufferedReader(new InputStreamReader(System.in))) {
+    /**************************************************
+     * The listens to the socket
+     * @throws Exception
+     */
+    private static void peerListen() throws Exception{
+        //create and listen to socket
+        System.out.println("Listening on Socket: " + myPort);
+        ServerSocket peerSocket = new ServerSocket();
+        peerSocket.setReuseAddress(true);
+        peerSocket.bind( new InetSocketAddress(myIp, myPort) );
+        peerSocket.setReuseAddress(true);
+        Socket peer = peerSocket.accept();
 
-            System.out.println("Connected to " + targetAddress + ":" + targetPort);
+        System.out.println("Just connected with peer");
 
-            String message;
-            while (true) {
-                System.out.print("Enter message to send (or 'exit' to disconnect): ");
-                message = userInput.readLine();
+        //create a stream to talk to other peer
+        DataInputStream in = new DataInputStream(peer.getInputStream());
+        DataOutputStream out = new DataOutputStream(peer.getOutputStream());
 
-                if (message == null || message.equalsIgnoreCase("exit")) {
-                    System.out.println("Exiting direct connection...");
-                    break;
-                }
+        //get string from client A
+        String msg = in.readUTF();
+        System.out.println(msg);
 
-                // Send message to the connected client
-                out.println(clientName + ": " + message);
+        //create a message and send it to Client A
+        String newMsg = getTime() + "\t" +myPort+ ": Yes I can hear you!";
+        out.writeUTF(newMsg);
+        System.out.println(newMsg + "\n");
 
-                // Read response from the other client
-                String response = in.readLine();
-                if (response == null) {
-                    System.out.println("Connection closed by the other client.");
-                    break;
-                }
-                System.out.println("Received: " + response);
-            }
-        } catch (IOException e) {
-            System.err.println("Error during direct connection: " + e.getMessage());
-        }
+        //close socket
+        peerSocket.close();
+    }
+
+    /**************************************************
+     * Creates a time stamp
+     */
+    private static String getTime(){
+        DateFormat df = new SimpleDateFormat("hh:mm:ss");
+        Date dateobj = new Date();
+        return df.format(dateobj);
+    }
+
+    /**************************************************
+     * Creates a random timer to wait
+     */
+    private static void pause()throws Exception{
+        //create random number between 1 and 15
+        Random rand = new Random();
+        int breath = rand.nextInt(5) + 1;
+        Thread.sleep(breath*1000);
     }
 }

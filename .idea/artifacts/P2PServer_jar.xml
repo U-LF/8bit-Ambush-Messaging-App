@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" name="P2PServer:jar">
-    <output-path>$PROJECT_DIR$/out/artifacts/P2PServer_jar</output-path>
-    <root id="archive" name="P2PServer.jar">
-      <element id="module-output" name="P2PServer" />
-    </root>
-  </artifact>
-</component>

@@ -7,7 +7,8 @@
       <module fileurl="file://$PROJECT_DIR$/ClientShared/ClientShared.iml" filepath="$PROJECT_DIR$/ClientShared/ClientShared.iml" />
       <module fileurl="file://$PROJECT_DIR$/MsgingApp.iml" filepath="$PROJECT_DIR$/MsgingApp.iml" />
       <module fileurl="file://$PROJECT_DIR$/P2PClient/P2PClient.iml" filepath="$PROJECT_DIR$/P2PClient/P2PClient.iml" />
-      <module fileurl="file://$PROJECT_DIR$/P2PServer/P2PServer.iml" filepath="$PROJECT_DIR$/P2PServer/P2PServer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/P2PServerSTUN/P2PServerSTUN.iml" filepath="$PROJECT_DIR$/P2PServerSTUN/P2PServerSTUN.iml" />
+      <module fileurl="file://$PROJECT_DIR$/P2PServerTURN/P2PServerTURN.iml" filepath="$PROJECT_DIR$/P2PServerTURN/P2PServerTURN.iml" />
       <module fileurl="file://$PROJECT_DIR$/ServerCLI/ServerCLI.iml" filepath="$PROJECT_DIR$/ServerCLI/ServerCLI.iml" />
     </modules>
   </component>
