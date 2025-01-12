@@ -1,8 +1,3 @@
-/**
- * The refactored code now includes a dedicated ThemeManager class to manage themes. The DashboardFrame class
- * delegates the responsibility of theme management to ThemeManager.
- */
-
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,83 +12,88 @@ public class DashboardFrame {
         dashboardFrame.setMinimumSize(new Dimension(500, 400));
         dashboardFrame.setPreferredSize(new Dimension(700, 500));
 
-        // Set the background image
-        String imageUrl = "https://img.freepik.com/free-photo/photorealistic-view-wild-bear-its-natural-environment_23-2151427243.jpg";
-        try {
-            ImageIcon backgroundImage = new ImageIcon(new URL(imageUrl));
-            JLabel backgroundLabel = new JLabel(backgroundImage);
-            backgroundLabel.setLayout(new BorderLayout());
-            dashboardFrame.setContentPane(backgroundLabel);
+        // Set the background color to dark blue-grey
+        dashboardFrame.getContentPane().setBackground(new Color(173, 216, 230));  // Light blue-grey color
 
-            dashboardFrame.addComponentListener(new ComponentAdapter() {
-                @Override
-                public void componentResized(ComponentEvent evt) {
-                    ImageIcon resizedIcon = new ImageIcon(backgroundImage.getImage().getScaledInstance(
-                            dashboardFrame.getWidth(), dashboardFrame.getHeight(), Image.SCALE_SMOOTH));
-                    backgroundLabel.setIcon(resizedIcon);
-                }
-            });
-        } catch (MalformedURLException e) {
-            System.err.println("Error loading background image: " + e.getMessage());
-        }
-
-        dashboardFrame.setLayout(new GridBagLayout());
+        // Set layout for the frame to BorderLayout
+        dashboardFrame.setLayout(new BorderLayout());
 
         // Initialize ThemeManager
         ThemeManagerDashboard themeManager = new ThemeManagerDashboard();
         themeManager.updateTheme(dashboardFrame); // Apply the initial theme
 
-        // Create buttons
-        JButton connectButton = createStyledButton("Connect to ChatRoom", e -> {
-            dashboardFrame.dispose();
-            ClientConnection.connectToServer();
-        });
+        // Create buttons with icons and listeners
+        JButton connectButton = createStyledCardButton("Connect to ChatRoom",
+                "https://w7.pngwing.com/pngs/273/74/png-transparent-online-chat-livechat-chat-room-baycreative-inc-google-icon-blue-text-logo-thumbnail.png", e -> {
+                    dashboardFrame.dispose();
+                    ClientConnection.connectToServer();
+                });
 
-        JButton configButton = createStyledButton("Config", e -> {
-            dashboardFrame.dispose();
-            openConfigEditor(dashboardFrame);
-        });
+        JButton configButton = createStyledCardButton("Config",
+                "https://cdn-icons-png.flaticon.com/512/8718/8718462.png", e -> {
+                    dashboardFrame.dispose();
+                    openConfigEditor(dashboardFrame);
+                });
 
-        JButton aboutButton = createStyledButton("About", e -> {
-            openAboutDialog(dashboardFrame);
-        });
+        JButton aboutButton = createStyledCardButton("About",
+                "https://w7.pngwing.com/pngs/257/702/png-transparent-about-us-logo-business-logo-company-brand-service-icon-about-us-hd-miscellaneous-blue-text-thumbnail.png", e -> {
+                    openAboutDialog(dashboardFrame);
+                });
 
-        JButton themeButton = createStyledButton("Theme", e -> {
-            themeManager.switchTheme(dashboardFrame);
-        });
+        JButton p2pButton = createStyledCardButton("P2P",
+                "https://png.pngtree.com/png-vector/20220724/ourmid/pngtree-peer-to-peer-icon-p2p-account-switcher-icon-vector-png-image_38118238.png", e -> {
+                    openP2PDialog(dashboardFrame, themeManager);  // Open the P2P dialog with theme applied
+                });
 
-        // Create P2P button
-        JButton p2pButton = createStyledButton("P2P", e -> {
-            openP2PDialog(dashboardFrame, themeManager);  // Open the P2P dialog with theme applied
-        });
-
-
-        // Panel for buttons
-        JPanel buttonPanel = new JPanel(new GridBagLayout());
+        // Panel to hold all buttons in a grid format (adjusted for the theme button to span two columns)
+        JPanel buttonPanel = new JPanel(new GridLayout(3, 2, 15, 15)); // 3 rows, 2 columns with gaps
         buttonPanel.setOpaque(false);
 
+        // Add buttons to the panel
+        buttonPanel.add(p2pButton);
+        buttonPanel.add(connectButton);
+        buttonPanel.add(configButton);
+        buttonPanel.add(aboutButton);
+
+
+        // Create a separate panel to center the Theme button across the entire row
+        JPanel themePanel = new JPanel();
+        themePanel.setLayout(new BorderLayout());
+        themePanel.setOpaque(false);
+
+        JButton themeButton = createStyledCardButton("Theme",
+                "https://play-lh.googleusercontent.com/lJ9E8YGdRgjbpLXzhv7fiwJ6fDDlLVRN0mIlJadhYFeOG1Br6HljeYTG8Qc5mIM-UNjc=w240-h480-rw", e -> {
+                    themeManager.switchTheme(dashboardFrame);
+                });
+
+        // Add the Theme button to the new themePanel and then add the panel to the buttonPanel
+        themePanel.add(themeButton, BorderLayout.CENTER);
+        buttonPanel.add(themePanel);
+
+        // Create a top panel with the app name
+        JPanel topPanel = new JPanel();
+        topPanel.setBackground(new Color(128, 0, 128));  // Purple color for the background
+        topPanel.setPreferredSize(new Dimension(topPanel.getPreferredSize().width, 100)); // Increase the height to 100px (adjust as needed)
+
+// Set GridBagLayout to center the label with equal space on all sides
+        topPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(10, 10, 10, 10); // Padding between buttons
+        gbc.gridx = 0;  // Center in the grid (single column)
+        gbc.gridy = 0;  // Single row
+        gbc.insets = new Insets(20, 20, 20, 20);  // Adds equal padding on all sides (top, left, bottom, right)
+        gbc.anchor = GridBagConstraints.CENTER;  // Ensure the label is centered within its grid cell
 
-        // Add P2P button to the button panel
-        gbc.gridx = 0; // All buttons in the first column
-        gbc.gridy = 0; // First row
-        buttonPanel.add(p2pButton, gbc);
+// Create and configure the app name label
+        JLabel appNameLabel = new JLabel("811 Msg App");
+        appNameLabel.setFont(new Font("Arial", Font.BOLD, 35));
+        appNameLabel.setForeground(Color.WHITE);
 
-        gbc.gridy++; // Move to the next row
-        buttonPanel.add(connectButton, gbc);
+// Add the label to the top panel using GridBagConstraints
+        topPanel.add(appNameLabel, gbc);
 
-        gbc.gridy++; // Move to the next row
-        buttonPanel.add(configButton, gbc);
-
-        gbc.gridy++; // Move to the next row
-        buttonPanel.add(aboutButton, gbc);
-
-        gbc.gridy++; // Move to the next row
-        buttonPanel.add(themeButton, gbc);
-
-        // Add the button panel to the main frame
-        dashboardFrame.add(buttonPanel, gbc);
+// Add top panel and button panel to the frame
+        dashboardFrame.add(topPanel, BorderLayout.NORTH);
+        dashboardFrame.add(buttonPanel, BorderLayout.CENTER);
 
         // Dynamic resizing of fonts
         dashboardFrame.addComponentListener(new ComponentAdapter() {
@@ -112,32 +112,54 @@ public class DashboardFrame {
         dashboardFrame.setVisible(true);
     }
 
-
-    private JButton createStyledButton(String text, ActionListener actionListener) {
-        JButton button = new JButton(text);
+    private JButton createStyledCardButton(String text, String iconUrl, ActionListener actionListener) {
+        JButton button = new JButton("<html><center>" + text + "</center></html>");
         button.setFocusPainted(false);
         button.setContentAreaFilled(false);
         button.setOpaque(true);
-        button.setBackground(Color.BLACK);
+        button.setBackground(new Color(40, 40, 40));
         button.setForeground(Color.WHITE);
-        button.setFont(new Font("Arial", Font.BOLD, 24));
-        button.setBorder(BorderFactory.createLineBorder(Color.CYAN, 3));
+        button.setFont(new Font("Arial", Font.BOLD, 20));
+
+        // Load icon from URL
+        ImageIcon icon = new ImageIcon(getImageFromURL(iconUrl));
+        button.setIcon(resizeIcon(icon));  // Resize the icon to fit the button
+
+        button.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(Color.GRAY);
+                button.setBackground(new Color(70, 70, 70));
+                button.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(Color.BLACK);
+                button.setBackground(new Color(40, 40, 40));
+                button.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
             }
         });
 
         button.addActionListener(actionListener);
         return button;
+    }
+
+    private ImageIcon resizeIcon(ImageIcon icon) {
+        Image img = icon.getImage();
+        Image resizedImg = img.getScaledInstance(100, 100, Image.SCALE_SMOOTH);  // Resize to 80x80 pixels
+        return new ImageIcon(resizedImg);
+    }
+
+    private Image getImageFromURL(String iconUrl) {
+        try {
+            URL url = new URL(iconUrl);
+            return new ImageIcon(url).getImage();
+        } catch (MalformedURLException e) {
+            System.err.println("Invalid URL: " + iconUrl);
+            return null;
+        }
     }
 
     private void openConfigEditor(JFrame dashboardFrame) {
@@ -197,6 +219,7 @@ public class DashboardFrame {
         aboutDialog.setLocationRelativeTo(dashboardFrame);
         aboutDialog.setVisible(true);
     }
+
     private void openP2PDialog(JFrame dashboardFrame, ThemeManagerDashboard themeManager) {
         // Create P2P dialog
         JDialog p2pDialog = new JDialog(dashboardFrame, "P2P Chat", true);
@@ -209,17 +232,13 @@ public class DashboardFrame {
 
         // Apply the theme to the P2P dialog
         themeManager.updateTheme(p2pDialog); // Reuse the updateTheme method to apply the selected theme to the dialog
-        messageLabel.setForeground(UIManager.getColor("Button.foreground")); // Apply the correct text color based on the theme
-
-        // Add the label to the dialog
+        messageLabel.setForeground(UIManager.getColor("Button.foreground")); // Apply the correct
         p2pDialog.add(messageLabel, BorderLayout.CENTER);
 
         // Show the dialog
         p2pDialog.setLocationRelativeTo(dashboardFrame);  // Center it relative to the main frame
         p2pDialog.setVisible(true);
     }
-
-
 
     private void showDeveloperInfo() {
         JOptionPane.showMessageDialog(null, "Developed by the Messaging App Team.");
@@ -233,6 +252,3 @@ public class DashboardFrame {
         JOptionPane.showMessageDialog(null, "Our vision is to create an intuitive messaging platform.");
     }
 }
-
-
-
