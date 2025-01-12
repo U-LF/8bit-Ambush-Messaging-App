@@ -13,7 +13,7 @@ public class DashboardFrame {
         dashboardFrame.setPreferredSize(new Dimension(700, 500));
 
         // Set the background color to dark blue-grey
-        dashboardFrame.getContentPane().setBackground(new Color(173, 216, 230));  // Light blue-grey color
+        dashboardFrame.getContentPane().setBackground(new Color(153, 153, 153));  // Light blue-grey color
 
         // Set layout for the frame to BorderLayout
         dashboardFrame.setLayout(new BorderLayout());
@@ -24,10 +24,12 @@ public class DashboardFrame {
 
         // Create buttons with icons and listeners
         JButton connectButton = createStyledCardButton("Connect to ChatRoom",
-                "https://w7.pngwing.com/pngs/273/74/png-transparent-online-chat-livechat-chat-room-baycreative-inc-google-icon-blue-text-logo-thumbnail.png", e -> {
+                "https://cdn-icons-png.flaticon.com/512/1911/1911059.png", e -> {
                     dashboardFrame.dispose();
                     ClientConnection.connectToServer();
                 });
+        connectButton.setBackground(new Color(0, 102, 204)); // Blue
+        connectButton.setForeground(Color.WHITE);
 
         JButton configButton = createStyledCardButton("Config",
                 "https://cdn-icons-png.flaticon.com/512/8718/8718462.png", e -> {
@@ -35,15 +37,24 @@ public class DashboardFrame {
                     openConfigEditor(dashboardFrame);
                 });
 
+        configButton.setBackground(new Color(0, 153, 76)); // Green
+        configButton.setForeground(Color.WHITE);
+
         JButton aboutButton = createStyledCardButton("About",
-                "https://w7.pngwing.com/pngs/257/702/png-transparent-about-us-logo-business-logo-company-brand-service-icon-about-us-hd-miscellaneous-blue-text-thumbnail.png", e -> {
+                "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", e -> {
                     openAboutDialog(dashboardFrame);
                 });
+
+        aboutButton.setBackground(new Color(255, 102, 0)); // Orange
+        aboutButton.setForeground(Color.WHITE);
 
         JButton p2pButton = createStyledCardButton("P2P",
                 "https://png.pngtree.com/png-vector/20220724/ourmid/pngtree-peer-to-peer-icon-p2p-account-switcher-icon-vector-png-image_38118238.png", e -> {
                     openP2PDialog(dashboardFrame, themeManager);  // Open the P2P dialog with theme applied
                 });
+
+        p2pButton.setBackground(new Color(102, 0, 153)); // Purple
+        p2pButton.setForeground(Color.WHITE);
 
         // Panel to hold all buttons in a grid format (adjusted for the theme button to span two columns)
         JPanel buttonPanel = new JPanel(new GridLayout(3, 2, 15, 15)); // 3 rows, 2 columns with gaps
@@ -55,16 +66,18 @@ public class DashboardFrame {
         buttonPanel.add(configButton);
         buttonPanel.add(aboutButton);
 
-
         // Create a separate panel to center the Theme button across the entire row
         JPanel themePanel = new JPanel();
         themePanel.setLayout(new BorderLayout());
         themePanel.setOpaque(false);
 
         JButton themeButton = createStyledCardButton("Theme",
-                "https://play-lh.googleusercontent.com/lJ9E8YGdRgjbpLXzhv7fiwJ6fDDlLVRN0mIlJadhYFeOG1Br6HljeYTG8Qc5mIM-UNjc=w240-h480-rw", e -> {
+                "https://cdn-icons-png.flaticon.com/512/3659/3659752.png", e -> {
                     themeManager.switchTheme(dashboardFrame);
                 });
+
+        themeButton.setBackground(new Color(255, 0, 0)); // Red
+        themeButton.setForeground(Color.WHITE);
 
         // Add the Theme button to the new themePanel and then add the panel to the buttonPanel
         themePanel.add(themeButton, BorderLayout.CENTER);
@@ -72,10 +85,10 @@ public class DashboardFrame {
 
         // Create a top panel with the app name
         JPanel topPanel = new JPanel();
-        topPanel.setBackground(new Color(128, 0, 128));  // Purple color for the background
+        topPanel.setBackground(new Color(153, 153, 153));  // Purple color for the background
         topPanel.setPreferredSize(new Dimension(topPanel.getPreferredSize().width, 100)); // Increase the height to 100px (adjust as needed)
 
-// Set GridBagLayout to center the label with equal space on all sides
+        // Set GridBagLayout to center the label with equal space on all sides
         topPanel.setLayout(new GridBagLayout());
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;  // Center in the grid (single column)
@@ -83,16 +96,22 @@ public class DashboardFrame {
         gbc.insets = new Insets(20, 20, 20, 20);  // Adds equal padding on all sides (top, left, bottom, right)
         gbc.anchor = GridBagConstraints.CENTER;  // Ensure the label is centered within its grid cell
 
-// Create and configure the app name label
+        // Create and configure the app name label
         JLabel appNameLabel = new JLabel("811 Msg App");
-        appNameLabel.setFont(new Font("Arial", Font.BOLD, 35));
+        appNameLabel.setFont(new Font("Times New Roman", Font.BOLD, 50));
         appNameLabel.setForeground(Color.WHITE);
 
-// Add the label to the top panel using GridBagConstraints
+        // Add the label to the top panel using GridBagConstraints
         topPanel.add(appNameLabel, gbc);
 
-// Add top panel and button panel to the frame
+        // Create a spacer panel to add space between topPanel and buttonPanel
+        JPanel spacerPanel = new JPanel();
+        spacerPanel.setPreferredSize(new Dimension(0, 50)); // Adjust the height as needed for spacing
+        spacerPanel.setOpaque(false); // Make it transparent
+
+        // Add top panel and button panel to the frame
         dashboardFrame.add(topPanel, BorderLayout.NORTH);
+        dashboardFrame.add(spacerPanel, BorderLayout.CENTER);
         dashboardFrame.add(buttonPanel, BorderLayout.CENTER);
 
         // Dynamic resizing of fonts
@@ -115,9 +134,9 @@ public class DashboardFrame {
     private JButton createStyledCardButton(String text, String iconUrl, ActionListener actionListener) {
         JButton button = new JButton("<html><center>" + text + "</center></html>");
         button.setFocusPainted(false);
-        button.setContentAreaFilled(false);
-        button.setOpaque(true);
-        button.setBackground(new Color(40, 40, 40));
+        button.setOpaque(true);  // Ensure the button is opaque to show background color
+        Color originalColor = new Color(40, 40, 40);  // Default background color
+        //button.setBackground(originalColor);
         button.setForeground(Color.WHITE);
         button.setFont(new Font("Arial", Font.BOLD, 20));
 
@@ -128,17 +147,20 @@ public class DashboardFrame {
         button.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
 
+        // MouseListener for hover effect
         button.addMouseListener(new MouseAdapter() {
+            //private final Color hoverColor = originalColor.brighter();  // Store the brighter hover color
+
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBackground(new Color(70, 70, 70));
-                button.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));
+               // button.setBackground(hoverColor);  // Set the hover color (brighter)
+                button.setBorder(BorderFactory.createLineBorder(Color.CYAN, 2));  // Highlight border
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBackground(new Color(40, 40, 40));
-                button.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));
+                //button.setBackground(originalColor);  // Reset background to original color
+                button.setBorder(BorderFactory.createEmptyBorder(20, 20, 20, 20));  // Reset border
             }
         });
 
@@ -146,9 +168,10 @@ public class DashboardFrame {
         return button;
     }
 
+
     private ImageIcon resizeIcon(ImageIcon icon) {
         Image img = icon.getImage();
-        Image resizedImg = img.getScaledInstance(100, 100, Image.SCALE_SMOOTH);  // Resize to 80x80 pixels
+        Image resizedImg = img.getScaledInstance(100, 100, Image.SCALE_SMOOTH);  // Resize to 100x100 pixels
         return new ImageIcon(resizedImg);
     }
 
