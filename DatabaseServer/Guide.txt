@@ -185,3 +185,100 @@ gson.jar
 websocket-api.jar
 jdbc-driver.jar
 
+Here's a step-by-step guide to install PostgreSQL on Windows:
+
+1. **Download PostgreSQL Installer**:
+   - Go to the official PostgreSQL website: https://www.postgresql.org/download/windows/
+   - Click on the "Download the installer" button
+   - Select the latest version of PostgreSQL for Windows x86-64
+
+2. **Run the Installer**:
+   - Double-click the downloaded .exe file
+   - Click "Next" when the installer opens
+   - Choose your installation directory (default is fine)
+   - Select components to install:
+     - PostgreSQL Server (required)
+     - pgAdmin 4 (recommended - GUI tool)
+     - Command Line Tools (recommended)
+     - Stack Builder (optional)
+
+3. **Set Password**:
+   - Enter a password for the database superuser (postgres)
+   - Make sure to remember this password!
+   - Default username is "postgres"
+
+4. **Set Port**:
+   - Keep the default port (5432) unless you have a specific reason to change it
+
+5. **Complete Installation**:
+   - Wait for the installation to complete
+   - Uncheck the "Stack Builder" option at the end unless you need additional tools
+   - Click "Finish"
+
+6. **Verify Installation**:
+   - Open pgAdmin 4 from your Start menu
+   - When prompted, enter the master password you created for pgAdmin
+   - In the browser window that opens:
+     - Expand "Servers"
+     - Expand "PostgreSQL"
+     - Enter your password when prompted
+     - You should see your server running
+
+7. **Create Your Database and Table**:
+   In pgAdmin 4:
+   ```sql
+   -- Right-click on Databases → Create → Database
+   -- Name it whatever you want (e.g., "myapp")
+
+   -- Then right-click on your new database → Query Tool
+   -- Paste and run this SQL:
+
+   CREATE TABLE authentication (
+       username VARCHAR(50) PRIMARY KEY,
+       display_name VARCHAR(100),
+       password VARCHAR(100),
+       blocked BOOLEAN DEFAULT FALSE
+   );
+   ```
+
+8. **Test Connection**:
+   - Open Command Prompt
+   - Type: `psql -U postgres`
+   - Enter your password when prompted
+   - If you see `postgres=#`, you're connected!
+
+Common Issues and Solutions:
+1. **'psql' is not recognized**:
+   - Add PostgreSQL to your PATH:
+     1. Search "Environment Variables" in Windows
+     2. Click "Environment Variables"
+     3. Under "System Variables", find "Path"
+     4. Click "Edit" → "New"
+     5. Add: `C:\Program Files\PostgreSQL\{version}\bin`
+     6. Click "OK" on all windows
+     7. Restart Command Prompt
+
+2. **Can't connect to server**:
+   - Check if PostgreSQL service is running:
+     1. Press Win + R
+     2. Type "services.msc"
+     3. Find "postgresql-x64-{version}"
+     4. Make sure it's "Running"
+     5. If not, right-click → Start
+
+3. **Permission denied**:
+   - Open pgAdmin 4
+   - Right-click your server
+   - Select "Properties"
+   - Go to "Connection" tab
+   - Verify username is "postgres"
+   - Check your password is correct
+
+For your Java application, use these connection settings:
+```java
+private static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres";  // or your database name
+private static final String DB_USER = "postgres";
+private static final String DB_PASSWORD = "your_password";  // password you set during installation
+```
+
+
