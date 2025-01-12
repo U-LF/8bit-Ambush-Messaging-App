@@ -10,7 +10,7 @@ public class Server {
     static StringBuilder messageBuilder = new StringBuilder();
 
     public static void main(String[] args) throws IOException {
-        ServerSocket serverSocket = new ServerSocket(2456);
+        ServerSocket serverSocket = new ServerSocket(2323);
         System.out.println("Server started, waiting for clients...");
 
         Thread serverTalkThread = new Thread(() -> {
