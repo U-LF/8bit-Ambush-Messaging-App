@@ -3,7 +3,7 @@ import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class Main {
+public class Authentication {
     private static final int AUTH_PORT = 3456;
     private static final String DB_SERVER_HOST = "localhost";
     private static final int DB_SERVER_PORT = 2456;

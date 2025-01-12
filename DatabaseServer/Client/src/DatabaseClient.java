@@ -3,7 +3,7 @@ import java.io.*;
 import java.net.Socket;
 import java.util.Scanner;
 
-public class Main {
+public class DatabaseClient {
     private static final String AUTH_SERVER_HOST = "localhost";
     private static final int AUTH_SERVER_PORT = 3456;
 

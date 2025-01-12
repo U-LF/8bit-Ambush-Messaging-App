@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 import com.google.gson.*;
 
-public class Main {
+public class DatabaseServer {
     private static final int PORT = 2456;
     private static Connection connection;
     private static final ExecutorService executor = Executors.newCachedThreadPool();
