@@ -231,9 +231,9 @@ public class DashboardFrame {
         JButton faqsButton = new JButton("FAQs");
         JButton visionButton = new JButton("Vision");
 
-        developersButton.addActionListener(e -> showDeveloperInfo());
-        faqsButton.addActionListener(e -> showFaqsInfo());
-        visionButton.addActionListener(e -> showVisionInfo());
+        developersButton.addActionListener(e -> DeveloperInfo.showDeveloperInfo());
+        faqsButton.addActionListener(e -> FAQsInfo.showFaqsInfo());
+        visionButton.addActionListener(e -> VisionInfo.showVisionInfo());
 
         aboutDialog.add(developersButton);
         aboutDialog.add(faqsButton);
@@ -263,15 +263,4 @@ public class DashboardFrame {
         p2pDialog.setVisible(true);
     }
 
-    private void showDeveloperInfo() {
-        JOptionPane.showMessageDialog(null, "Developed by the Messaging App Team.");
-    }
-
-    private void showFaqsInfo() {
-        JOptionPane.showMessageDialog(null, "FAQs: 1. How to use? 2. Troubleshooting...");
-    }
-
-    private void showVisionInfo() {
-        JOptionPane.showMessageDialog(null, "Our vision is to create an intuitive messaging platform.");
-    }
 }
