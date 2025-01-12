@@ -1,0 +1,187 @@
+# Authentication System Implementation Guide
+
+## Table Schema
+```sql
+CREATE TABLE authentication (
+    username VARCHAR(50) PRIMARY KEY,
+    display_name VARCHAR(100),
+    password VARCHAR(100),
+    blocked BOOLEAN DEFAULT FALSE
+);
+```
+
+## System Architecture
+The authentication system consists of three main components working together:
+
+1. **Client** (Client.java)
+2. **Authentication Server** (AuthenticationServer.java)
+3. **Database Server** (DatabaseServer.java)
+
+### Port Configuration
+- Database Server: Port 2456
+- Authentication Server: Port 3456
+- Client connects to Authentication Server on port 3456
+
+## Data Flow
+
+### 1. Login Flow
+```
+Client → Authentication Server → Database Server
+  ↑           ↓                    ↓
+  └───────────┴────────────────────┘
+      Response flows back
+```
+
+1. **Client initiates login**:
+   - User enters username and password
+   - Client creates JSON request:
+   ```json
+   {
+       "action": "login",
+       "username": "user_input",
+       "password": "password_input"
+   }
+   ```
+
+2. **Authentication Server handles request**:
+   - Receives client request
+   - Forwards request to Database Server
+   - Waits for response
+   - Returns Database Server's response to client
+
+3. **Database Server processes login**:
+   - Receives request from Authentication Server
+   - Checks credentials in database
+   - Verifies user is not blocked
+   - Returns response:
+   ```json
+   {"status":"success","message":"Login successful"}
+   // or
+   {"status":"error","message":"Invalid username or password"}
+   // or
+   {"status":"error","message":"Account is blocked"}
+   ```
+
+### 2. Signup Flow
+Similar to login flow, but with different data:
+
+1. **Client initiates signup**:
+   ```json
+   {
+       "action": "signup",
+       "username": "new_user",
+       "display_name": "Display Name",
+       "password": "new_password"
+   }
+   ```
+
+2. **Database Server processes signup**:
+   - Checks if username exists
+   - Creates new account if username is available
+   - Sets blocked = FALSE by default
+   - Returns success/error response
+
+## Component Details
+
+### 1. Client (Client.java)
+- Provides user interface via console
+- Handles user input
+- Creates JSON requests
+- Displays server responses
+- Features:
+  - Login
+  - Signup
+  - Exit option
+
+### 2. Authentication Server (AuthenticationServer.java)
+- Acts as intermediary between Client and Database Server
+- Forwards requests and responses
+- Uses threading for multiple client connections
+- No data modification, pure forwarding
+
+### 3. Database Server (DatabaseServer.java)
+- Manages database connections
+- Handles business logic
+- Processes authentication requests
+- Uses thread pool for client handling
+- Maintains singleton database connection
+
+## Setup Instructions
+
+1. **Database Setup**:
+   ```sql
+   -- Create the authentication table
+   CREATE TABLE authentication (
+       username VARCHAR(50) PRIMARY KEY,
+       display_name VARCHAR(100),
+       password VARCHAR(100),
+       blocked BOOLEAN DEFAULT FALSE
+   );
+   ```
+
+2. **Configure Database Connection**:
+   In DatabaseServer.java, set:
+   ```java
+   private static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres";
+   private static final String DB_USER = "postgres";
+   private static final String DB_PASSWORD = "ahmed";
+   ```
+
+3. **Start Servers**:
+   1. Start DatabaseServer first
+   2. Start AuthenticationServer second
+   3. Start Client last
+
+## Testing
+
+1. **Test Signup**:
+   ```
+   Choice: 2
+   Username: testuser
+   Display name: Test User
+   Password: testpass
+   ```
+
+2. **Test Login**:
+   ```
+   Choice: 1
+   Username: testuser
+   Password: testpass
+   ```
+
+3. **Test Blocked Account**:
+   ```sql
+   -- Block a user
+   UPDATE authentication SET blocked = TRUE WHERE username = 'testuser';
+   ```
+   Then try logging in - should receive blocked account message.
+
+## Error Handling
+
+The system handles various error scenarios:
+- Database connection failures
+- Invalid credentials
+- Blocked accounts
+- Duplicate usernames during signup
+- Network communication errors
+
+## Dependencies
+- PostgreSQL JDBC Driver
+- Google Gson library for JSON handling
+- Java Standard Library
+
+## Security Notes
+For production use, consider:
+- Password hashing
+- Connection encryption
+- Input validation
+- Connection pooling
+- Proper exception handling
+- Session management
+
+
+## Drivers used
+gson.jar
+websocket-api.jar
+jdbc-driver.jar
+
