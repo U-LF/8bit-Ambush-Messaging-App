@@ -13,16 +13,16 @@
           <root url="jar://$USER_HOME$/Downloads/gson-2.11.0.jar!/" />
           <root url="jar://$USER_HOME$/Downloads/javax.websocket-api-1.1.jar!/" />
           <root url="jar://$USER_HOME$/Downloads/postgresql-42.7.4.jar!/" />
-          <root url="file://$MODULE_DIR$/../.." />
+          <root url="file://$MODULE_DIR$/.." />
         </CLASSES>
         <JAVADOC />
         <SOURCES>
-          <root url="file://$MODULE_DIR$/../../ClientCLI/src" />
-          <root url="file://$MODULE_DIR$/../../ClientGUI/src" />
-          <root url="file://$MODULE_DIR$/../../ClientShared/src" />
+          <root url="file://$MODULE_DIR$/../ClientCLI/src" />
+          <root url="file://$MODULE_DIR$/../ClientGUI/src" />
+          <root url="file://$MODULE_DIR$/../ClientShared/src" />
+          <root url="file://$MODULE_DIR$/../DatabaseServer/src" />
+          <root url="file://$MODULE_DIR$/../ServerCLI/src" />
           <root url="file://$MODULE_DIR$/src" />
-          <root url="file://$MODULE_DIR$/../src" />
-          <root url="file://$MODULE_DIR$/../../ServerCLI/src" />
         </SOURCES>
       </library>
     </orderEntry>
