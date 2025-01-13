@@ -25,7 +25,7 @@ public class DatabaseClient {
 
                 switch (choice) {
                     case "1":
-                        handleLogin(writer, reader, scanner);
+                        System.out.println("Login function: "+ handleLogin(writer, reader, scanner));
                         break;
                     case "2":
                         handleSignup(writer, reader, scanner);
@@ -41,9 +41,9 @@ public class DatabaseClient {
         } catch (IOException e) {
             System.err.println("Client error: " + e.getMessage());
         }
-    }
+    } //main end
 
-    private static void handleLogin(BufferedWriter writer, BufferedReader reader, Scanner scanner) throws IOException {
+    private static boolean handleLogin(BufferedWriter writer, BufferedReader reader, Scanner scanner) throws IOException {
         System.out.print("Username: ");
         String username = scanner.nextLine().trim();
         System.out.print("Password: ");
@@ -61,9 +61,17 @@ public class DatabaseClient {
 
         String response = reader.readLine();
         System.out.println("Server response: " + response);
+
+        // Manually parse the response string
+        if (response.contains("\"status\":\"success\"") && response.contains("\"message\":\"Login successful\"")) {
+            return true;
+        }
+
+        return false;
     }
 
-    private static void handleSignup(BufferedWriter writer, BufferedReader reader, Scanner scanner) throws IOException {
+
+    private static boolean handleSignup(BufferedWriter writer, BufferedReader reader, Scanner scanner) throws IOException {
         System.out.print("Username: ");
         String username = scanner.nextLine().trim();
         System.out.print("Display name: ");
@@ -83,5 +91,11 @@ public class DatabaseClient {
 
         String response = reader.readLine();
         System.out.println("Server response: " + response);
+
+        if (response.contains("\"status\":\"success\"") && response.contains("\"message\":\"Account created successfully\"")) {
+            return true;
+        }
+
+        return false;
     }
 }

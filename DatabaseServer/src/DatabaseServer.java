@@ -7,7 +7,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ExecutorService;
 
 public class DatabaseServer {
-    private static final int PORT = 2456;
+    private static final int PORT = 2457;
     private static final ExecutorService executor = Executors.newCachedThreadPool();
     private final DatabaseManager dbManager;
 
