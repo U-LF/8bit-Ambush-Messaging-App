@@ -1,0 +1,284 @@
+# Authentication System Implementation Guide
+
+## Table Schema
+```sql
+CREATE TABLE authentication (
+    username VARCHAR(50) PRIMARY KEY,
+    display_name VARCHAR(100),
+    password VARCHAR(100),
+    blocked BOOLEAN DEFAULT FALSE
+);
+```
+
+## System Architecture
+The authentication system consists of three main components working together:
+
+1. **Client** (Client.java)
+2. **Authentication Server** (AuthenticationServer.java)
+3. **Database Server** (DatabaseServer.java)
+
+### Port Configuration
+- Database Server: Port 2456
+- Authentication Server: Port 3456
+- Client connects to Authentication Server on port 3456
+
+## Data Flow
+
+### 1. Login Flow
+```
+Client → Authentication Server → Database Server
+  ↑           ↓                    ↓
+  └───────────┴────────────────────┘
+      Response flows back
+```
+
+1. **Client initiates login**:
+   - User enters username and password
+   - Client creates JSON request:
+   ```json
+   {
+       "action": "login",
+       "username": "user_input",
+       "password": "password_input"
+   }
+   ```
+
+2. **Authentication Server handles request**:
+   - Receives client request
+   - Forwards request to Database Server
+   - Waits for response
+   - Returns Database Server's response to client
+
+3. **Database Server processes login**:
+   - Receives request from Authentication Server
+   - Checks credentials in database
+   - Verifies user is not blocked
+   - Returns response:
+   ```json
+   {"status":"success","message":"Login successful"}
+   // or
+   {"status":"error","message":"Invalid username or password"}
+   // or
+   {"status":"error","message":"Account is blocked"}
+   ```
+
+### 2. Signup Flow
+Similar to login flow, but with different data:
+
+1. **Client initiates signup**:
+   ```json
+   {
+       "action": "signup",
+       "username": "new_user",
+       "display_name": "Display Name",
+       "password": "new_password"
+   }
+   ```
+
+2. **Database Server processes signup**:
+   - Checks if username exists
+   - Creates new account if username is available
+   - Sets blocked = FALSE by default
+   - Returns success/error response
+
+## Component Details
+
+### 1. Client (Client.java)
+- Provides user interface via console
+- Handles user input
+- Creates JSON requests
+- Displays server responses
+- Features:
+  - Login
+  - Signup
+  - Exit option
+
+### 2. Authentication Server (AuthenticationServer.java)
+- Acts as intermediary between Client and Database Server
+- Forwards requests and responses
+- Uses threading for multiple client connections
+- No data modification, pure forwarding
+
+### 3. Database Server (DatabaseServer.java)
+- Manages database connections
+- Handles business logic
+- Processes authentication requests
+- Uses thread pool for client handling
+- Maintains singleton database connection
+
+## Setup Instructions
+
+1. **Database Setup**:
+   ```sql
+   -- Create the authentication table
+   CREATE TABLE authentication (
+       username VARCHAR(50) PRIMARY KEY,
+       display_name VARCHAR(100),
+       password VARCHAR(100),
+       blocked BOOLEAN DEFAULT FALSE
+   );
+   ```
+
+2. **Configure Database Connection**:
+   In DatabaseServer.java, set:
+   ```java
+   private static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres";
+   private static final String DB_USER = "postgres";
+   private static final String DB_PASSWORD = "ahmed";
+   ```
+
+3. **Start Servers**:
+   1. Start DatabaseServer first
+   2. Start AuthenticationServer second
+   3. Start Client last
+
+## Testing
+
+1. **Test Signup**:
+   ```
+   Choice: 2
+   Username: testuser
+   Display name: Test User
+   Password: testpass
+   ```
+
+2. **Test Login**:
+   ```
+   Choice: 1
+   Username: testuser
+   Password: testpass
+   ```
+
+3. **Test Blocked Account**:
+   ```sql
+   -- Block a user
+   UPDATE authentication SET blocked = TRUE WHERE username = 'testuser';
+   ```
+   Then try logging in - should receive blocked account message.
+
+## Error Handling
+
+The system handles various error scenarios:
+- Database connection failures
+- Invalid credentials
+- Blocked accounts
+- Duplicate usernames during signup
+- Network communication errors
+
+## Dependencies
+- PostgreSQL JDBC Driver
+- Google Gson library for JSON handling
+- Java Standard Library
+
+## Security Notes
+For production use, consider:
+- Password hashing
+- Connection encryption
+- Input validation
+- Connection pooling
+- Proper exception handling
+- Session management
+
+
+## Drivers used
+gson.jar
+websocket-api.jar
+jdbc-driver.jar
+
+Here's a step-by-step guide to install PostgreSQL on Windows:
+
+1. **Download PostgreSQL Installer**:
+   - Go to the official PostgreSQL website: https://www.postgresql.org/download/windows/
+   - Click on the "Download the installer" button
+   - Select the latest version of PostgreSQL for Windows x86-64
+
+2. **Run the Installer**:
+   - Double-click the downloaded .exe file
+   - Click "Next" when the installer opens
+   - Choose your installation directory (default is fine)
+   - Select components to install:
+     - PostgreSQL Server (required)
+     - pgAdmin 4 (recommended - GUI tool)
+     - Command Line Tools (recommended)
+     - Stack Builder (optional)
+
+3. **Set Password**:
+   - Enter a password for the database superuser (postgres)
+   - Make sure to remember this password!
+   - Default username is "postgres"
+
+4. **Set Port**:
+   - Keep the default port (5432) unless you have a specific reason to change it
+
+5. **Complete Installation**:
+   - Wait for the installation to complete
+   - Uncheck the "Stack Builder" option at the end unless you need additional tools
+   - Click "Finish"
+
+6. **Verify Installation**:
+   - Open pgAdmin 4 from your Start menu
+   - When prompted, enter the master password you created for pgAdmin
+   - In the browser window that opens:
+     - Expand "Servers"
+     - Expand "PostgreSQL"
+     - Enter your password when prompted
+     - You should see your server running
+
+7. **Create Your Database and Table**:
+   In pgAdmin 4:
+   ```sql
+   -- Right-click on Databases → Create → Database
+   -- Name it whatever you want (e.g., "myapp")
+
+   -- Then right-click on your new database → Query Tool
+   -- Paste and run this SQL:
+
+   CREATE TABLE authentication (
+       username VARCHAR(50) PRIMARY KEY,
+       display_name VARCHAR(100),
+       password VARCHAR(100),
+       blocked BOOLEAN DEFAULT FALSE
+   );
+   ```
+
+8. **Test Connection**:
+   - Open Command Prompt
+   - Type: `psql -U postgres`
+   - Enter your password when prompted
+   - If you see `postgres=#`, you're connected!
+
+Common Issues and Solutions:
+1. **'psql' is not recognized**:
+   - Add PostgreSQL to your PATH:
+     1. Search "Environment Variables" in Windows
+     2. Click "Environment Variables"
+     3. Under "System Variables", find "Path"
+     4. Click "Edit" → "New"
+     5. Add: `C:\Program Files\PostgreSQL\{version}\bin`
+     6. Click "OK" on all windows
+     7. Restart Command Prompt
+
+2. **Can't connect to server**:
+   - Check if PostgreSQL service is running:
+     1. Press Win + R
+     2. Type "services.msc"
+     3. Find "postgresql-x64-{version}"
+     4. Make sure it's "Running"
+     5. If not, right-click → Start
+
+3. **Permission denied**:
+   - Open pgAdmin 4
+   - Right-click your server
+   - Select "Properties"
+   - Go to "Connection" tab
+   - Verify username is "postgres"
+   - Check your password is correct
+
+For your Java application, use these connection settings:
+```java
+private static final String DB_URL = "jdbc:postgresql://localhost:5432/postgres";  // or your database name
+private static final String DB_USER = "postgres";
+private static final String DB_PASSWORD = "your_password";  // password you set during installation
+```
+
+
