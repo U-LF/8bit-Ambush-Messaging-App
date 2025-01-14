@@ -28,21 +28,21 @@ public class DashboardFrame {
         gradientPanel.setLayout(new BorderLayout());
 
         // Create buttons with proper layout management and dynamic resizing
-        JButton p2pButton = createStyledCardButton("P2P", "https://png.pngtree.com/png-vector/20220724/ourmid/pngtree-peer-to-peer-icon-p2p-account-switcher-icon-vector-png-image_38118238.png", e -> openP2PDialog(dashboardFrame));
-        JButton connectButton = createStyledCardButton("Connect to ChatRoom", "https://cdn-icons-png.flaticon.com/512/1911/1911059.png", e -> {
+        JButton p2pButton = createStyledCardButton("P2P", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> openP2PDialog(dashboardFrame));
+        JButton connectButton = createStyledCardButton("Connect to ChatRoom", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> {
             dashboardFrame.dispose();
             ClientConnection.connectToServer(); // Placeholder for server connection logic
         });
-        JButton configButton = createStyledCardButton("Config", "https://cdn-icons-png.flaticon.com/512/8718/8718462.png", e -> openConfigEditor(dashboardFrame));
-        JButton aboutButton = createStyledCardButton("About", "https://cdn-icons-png.flaticon.com/512/3135/3135715.png", e -> openAboutDialog(dashboardFrame));
+        JButton configButton = createStyledCardButton("Config", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> openConfigEditor(dashboardFrame));
+        JButton aboutButton = createStyledCardButton("About", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> openAboutDialog(dashboardFrame));
 
         // Add a Theme button
-        JButton themeButton = createStyledCardButton("Theme", "https://cdn-icons-png.flaticon.com/512/3659/3659752.png", e -> {
+        JButton themeButton = createStyledCardButton("Theme", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> {
             ThemeManagerDashboard themeManager = new ThemeManagerDashboard();
             themeManager.switchTheme(dashboardFrame); // Launch the theme switcher dialog
         });
 
-        JButton logoutButton = createStyledCardButton("Logout", "https://cdn-icons-png.flaticon.com/512/1828/1828490.png", e -> System.exit(0));
+        JButton logoutButton = createStyledCardButton("Logout", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> System.exit(0));
 
         JPanel buttonPanel = new JPanel(new GridLayout(3, 2, 15, 15));
         buttonPanel.setOpaque(false);
