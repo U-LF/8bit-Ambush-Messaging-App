@@ -4,37 +4,6 @@ import java.awt.event.*;
 import java.io.*;
 import java.net.URL;
 
-class GradientBorder extends javax.swing.border.AbstractBorder {
-    private final Color startColor;
-    private final Color endColor;
-    private final int thickness;
-
-    public GradientBorder(Color startColor, Color endColor, int thickness) {
-        this.startColor = startColor;
-        this.endColor = endColor;
-        this.thickness = thickness;
-    }
-
-    @Override
-    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        Graphics2D g2d = (Graphics2D) g.create();
-        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-
-        // Create gradient paint from start to end color
-        GradientPaint gradient = new GradientPaint(0, 0, startColor, width, height, endColor);
-        g2d.setPaint(gradient);
-
-        // Draw the gradient border with rounded corners
-        g2d.setStroke(new BasicStroke(thickness));
-        g2d.drawRoundRect(x, y, width - 1, height - 1, 20, 20); // Rounded corners
-        g2d.dispose();
-    }
-
-    @Override
-    public Insets getBorderInsets(Component c) {
-        return new Insets(thickness, thickness, thickness, thickness);
-    }
-}
 
 public class DashboardFrame {
     private boolean isDarkTheme = false; // To track the current theme state
