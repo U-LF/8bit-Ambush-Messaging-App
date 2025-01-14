@@ -25,7 +25,7 @@ public class ClientGUIFrame extends Component {
     public void showGUI() {
         JFrame frame = new JFrame("Messaging App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 400);
+        frame.setSize(700, 600);
 
         frame.setLayout(new BorderLayout());
 
