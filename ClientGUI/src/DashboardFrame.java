@@ -136,27 +136,41 @@ public class DashboardFrame {
             ex.printStackTrace();
         }
 
-        // Apply the gradient border (neon purple)
-        button.setBorder(new GradientBorder(new Color(204, 51, 255), new Color(255, 0, 255), 4)); // Neon purple gradient border
+        // Apply rounded corners to the button
+        button.setBorder(new RoundedBorder(30)); // Rounded corners (adjust as needed)
 
-        // Add hover effect with glow
+        // Add gradient fill to match background
+        button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
+            @Override
+            public void paint(Graphics g, JComponent c) {
+                JButton button = (JButton) c;
+                Graphics2D g2d = (Graphics2D) g;
+                Color gradientStart = new Color(113, 54, 252); // Purple
+                Color gradientEnd = new Color(178, 75, 216);   // Light Purple
+                GradientPaint gradient = new GradientPaint(0, 0, gradientStart, 0, button.getHeight(), gradientEnd);
+                g2d.setPaint(gradient);
+                g2d.fillRoundRect(0, 0, button.getWidth(), button.getHeight(), 30, 30); // Rounded corners
+                super.paint(g, c); // Paint text and icon
+            }
+        });
+
+        // Hover effect with neon glow border
         button.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                button.setBorder(new GradientBorder(new Color(255, 0, 255), new Color(204, 51, 255), 6)); // Glow effect on hover
-                button.setForeground(new Color(255, 255, 255)); // Change text color on hover
+                button.setBorder(new NeonBorder(30)); // Neon glow on hover
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                button.setBorder(new GradientBorder(new Color(204, 51, 255), new Color(255, 0, 255), 4)); // Default border
-                button.setForeground(new Color(255, 255, 255)); // Reset text color
+                button.setBorder(new RoundedBorder(30)); // Retain rounded corners and remove glow
             }
         });
 
         button.addActionListener(actionListener);
         return button;
     }
+
 
     private void openConfigEditor(JFrame dashboardFrame) {
         JFrame configFrame = new JFrame("Edit Config");
