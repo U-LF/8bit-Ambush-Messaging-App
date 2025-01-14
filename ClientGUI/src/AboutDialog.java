@@ -37,7 +37,7 @@ public class AboutDialog {
 
         // Add action listeners
         developersButton.addActionListener(e -> DeveloperInfo.showDeveloperInfo());
-        faqsButton.addActionListener(e -> FAQsInfo.showFaqsInfo());
+        faqsButton.addActionListener(e -> FAQsInfo.showFaqsInfo(parentFrame));
         visionButton.addActionListener(e -> VisionInfo.showVisionInfo());
 
         // Add components to the dialog

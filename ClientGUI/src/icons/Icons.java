@@ -7,7 +7,7 @@ import java.io.InputStream;
 
 public class Icons {
 
-    // Define the resource path within the resources folder
+    // Define the resource path within the resources folder (no change here)
     private static final String ICONS_PATH = "/icons/";
 
     /**
@@ -20,11 +20,15 @@ public class Icons {
      */
     public static ImageIcon getIcon(String fileName, int width, int height) {
         try {
-            // Load the icon as a resource from the classpath
-            InputStream iconStream = Icons.class.getResourceAsStream(ICONS_PATH + fileName);
+            // Load the icon as a resource from the classpath using ICONS_PATH
+            String resourcePath = ICONS_PATH + fileName;
+            System.out.println("Attempting to load icon from: " + resourcePath);  // Debugging line
+
+            InputStream iconStream = Icons.class.getResourceAsStream(resourcePath);
 
             if (iconStream == null) {
-                throw new IllegalArgumentException("Icon not found: " + fileName);
+                System.err.println("Icon not found at: " + resourcePath);  // Debugging line
+                return null;
             }
 
             // Load the image icon from the input stream
