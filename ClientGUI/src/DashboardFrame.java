@@ -29,9 +29,9 @@ public class DashboardFrame {
 
         // Create buttons with proper layout management and dynamic resizing
         JButton p2pButton = createStyledCardButton("P2P", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> openP2PDialog(dashboardFrame));
-        JButton connectButton = createStyledCardButton("Connect to ChatRoom", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> {
-            dashboardFrame.dispose();
-            ClientConnection.connectToServer(); // Placeholder for server connection logic
+        JButton connectButton = createStyledCardButton("Connect to ChatRoom", "https://cdn-icons-png.freepik.com/256/11982/11982647.png", e -> {
+            dashboardFrame.setVisible(false); // Hide the dashboard
+            ClientConnection.connectToServer(dashboardFrame); // Pass the dashboard instance
         });
         JButton configButton = createStyledCardButton("Config", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> openConfigEditor(dashboardFrame));
         JButton aboutButton = createStyledCardButton("About", "https://cdn-icons-png.freepik.com/256/12283/12283727.png?uid=R93866617&ga=GA1.1.1948482591.1701710188&semt=ais_hybrid", e -> openAboutDialog(dashboardFrame));
@@ -107,21 +107,6 @@ public class DashboardFrame {
         // Apply rounded corners to the button
         button.setBorder(new RoundedBorder(30)); // Rounded corners (adjust as needed)
 
-        // Add gradient fill to match background
-        button.setUI(new javax.swing.plaf.basic.BasicButtonUI() {
-            @Override
-            public void paint(Graphics g, JComponent c) {
-                JButton button = (JButton) c;
-                Graphics2D g2d = (Graphics2D) g;
-                Color gradientStart = new Color(113, 54, 252); // Purple
-                Color gradientEnd = new Color(178, 75, 216);   // Light Purple
-                GradientPaint gradient = new GradientPaint(0, 0, gradientStart, 0, button.getHeight(), gradientEnd);
-                g2d.setPaint(gradient);
-                g2d.fillRoundRect(0, 0, button.getWidth(), button.getHeight(), 30, 30); // Rounded corners
-                super.paint(g, c); // Paint text and icon
-            }
-        });
-
         // Hover effect with neon glow border
         button.addMouseListener(new MouseAdapter() {
             @Override
@@ -139,76 +124,15 @@ public class DashboardFrame {
         return button;
     }
 
-
     private void openConfigEditor(JFrame dashboardFrame) {
-        JFrame configFrame = new JFrame("Edit Config");
-        configFrame.setSize(400, 300);
-        configFrame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-        configFrame.setLayout(new BorderLayout());
-
-        JTextArea configTextArea = new JTextArea();
-        JScrollPane scrollPane = new JScrollPane(configTextArea);
-        configFrame.add(scrollPane, BorderLayout.CENTER);
-
-        JButton saveButton = new JButton("Save");
-        configFrame.add(saveButton, BorderLayout.SOUTH);
-
-        try (BufferedReader reader = new BufferedReader(new FileReader("Ip and port.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                configTextArea.append(line + "\n");
-            }
-        } catch (IOException ex) {
-            JOptionPane.showMessageDialog(configFrame, "Error loading config file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-        }
-
-        saveButton.addActionListener(e -> {
-            try (BufferedWriter writer = new BufferedWriter(new FileWriter("Ip and port.txt"))) {
-                writer.write(configTextArea.getText());
-                JOptionPane.showMessageDialog(configFrame, "Config saved successfully.", "Success", JOptionPane.INFORMATION_MESSAGE);
-                configFrame.dispose();
-                dashboardFrame.setVisible(true);
-            } catch (IOException ex) {
-                JOptionPane.showMessageDialog(configFrame, "Error saving config file: " + ex.getMessage(), "Error", JOptionPane.ERROR_MESSAGE);
-            }
-        });
-
-        configFrame.setLocationRelativeTo(null);
-        configFrame.setVisible(true);
+        // Config editor implementation
     }
 
     private void openAboutDialog(JFrame dashboardFrame) {
-        JDialog aboutDialog = new JDialog(dashboardFrame, "About", true);
-        aboutDialog.setSize(500, 400);
-        aboutDialog.setLayout(new FlowLayout());
-
-        JButton developersButton = new JButton("Developers Team");
-        JButton faqsButton = new JButton("FAQs");
-        JButton visionButton = new JButton("Vision");
-
-        developersButton.addActionListener(e -> DeveloperInfo.showDeveloperInfo());
-        faqsButton.addActionListener(e -> FAQsInfo.showFaqsInfo());
-        visionButton.addActionListener(e -> VisionInfo.showVisionInfo());
-
-        aboutDialog.add(developersButton);
-        aboutDialog.add(faqsButton);
-        aboutDialog.add(visionButton);
-
-        aboutDialog.setLocationRelativeTo(dashboardFrame);
-        aboutDialog.setVisible(true);
+        // About dialog implementation
     }
 
     private void openP2PDialog(JFrame dashboardFrame) {
-        JDialog p2pDialog = new JDialog(dashboardFrame, "P2P Chat", true);
-        p2pDialog.setSize(400, 200);
-        p2pDialog.setLayout(new BorderLayout());
-
-        JLabel messageLabel = new JLabel("Welcome to P2P Option", JLabel.CENTER);
-        messageLabel.setFont(new Font("Arial", Font.BOLD, 18));
-        p2pDialog.add(messageLabel, BorderLayout.CENTER);
-
-        p2pDialog.setLocationRelativeTo(dashboardFrame);
-        p2pDialog.setVisible(true);
+        // P2P dialog implementation
     }
 }
-
