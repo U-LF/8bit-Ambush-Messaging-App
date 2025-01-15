@@ -7,7 +7,7 @@ import ClientShared.ConnectionAddress;
 public class ClientConnection {
     private static DataOutputStream outToServer;
     // Method to connect to the server
-    public static void connectToServer() {
+    public static void connectToServer(JFrame dashboardFrame) {
         try {
             // Load server connection details
             ConnectionAddress serverAddress = new ConnectionAddress("Ip and port.txt");

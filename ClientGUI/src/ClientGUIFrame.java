@@ -7,10 +7,12 @@ public class ClientGUIFrame extends Component {
     private final JTextArea messageArea;
     private final JTextField inputField;
     private String username = "Anonymous"; // Default username
-    private ThemeManagerDashboard themeManager; // Removed redundant initialization
+    private ThemeManagerDashboard themeManager;
     private final ActiveUsersManager activeUsersManager;
     private final SettingsManager settingsManager;
     private final MessageAppender messageAppender;
+    private JList<String> activeUsersList; // JList to display active users
+    private DashboardFrame dashboardFrame; // Reference to the DashboardFrame
 
     public ClientGUIFrame(DataOutputStream outToServer) {
         this.outToServer = outToServer;
@@ -20,45 +22,50 @@ public class ClientGUIFrame extends Component {
         this.activeUsersManager = new ActiveUsersManager(themeManager);
         this.settingsManager = new SettingsManager();
         this.messageAppender = new MessageAppender(messageArea);
+        this.dashboardFrame = new DashboardFrame(); // Initialize the reference correctly
     }
 
     public void showGUI() {
         JFrame frame = new JFrame("Messaging App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(500, 400);
-
+        frame.setSize(700, 600);
         frame.setLayout(new BorderLayout());
 
+        // Message area panel
         JPanel messagePanel = new MessagePanelFactory(themeManager).createMessagePanel(messageArea);
+
+        JButton sendButton = SendButtonFactory.createSendButton(); // Create send button
+
+        // Input panel
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputField.setBackground(Color.LIGHT_GRAY);
         inputField.setForeground(Color.BLACK);
 
-        JButton sendButton = SendButtonFactory.createSendButton();
-        JButton activeUsersButton = activeUsersManager.createActiveUsersButton(frame);
-
-        // Create settings button using SettingsManager
-        JButton settingsButton = settingsManager.createSettingsButton(this);
-
-        JPanel topPanel = new JPanel(new BorderLayout());
-        topPanel.setPreferredSize(new Dimension(frame.getWidth(), 80));
-        topPanel.setBackground(new Color(70, 130, 180));
-
-        JPanel leftPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        leftPanel.setOpaque(false);
-        leftPanel.add(settingsButton); // Add settings button to the panel
-
-        JPanel rightPanel = new JPanel(new FlowLayout(FlowLayout.RIGHT));
-        rightPanel.setOpaque(false);
-        rightPanel.add(activeUsersButton);
-
-        topPanel.add(leftPanel, BorderLayout.WEST);
-        topPanel.add(rightPanel, BorderLayout.EAST);
-
+        // Add inputField and sendButton to inputPanel
         inputPanel.add(inputField, BorderLayout.CENTER);
         inputPanel.add(sendButton, BorderLayout.EAST);
 
-        frame.add(topPanel, BorderLayout.NORTH);
+        // Sidebar for active users
+        JPanel sidebarPanel = createSidebarPanel();
+        frame.add(sidebarPanel, BorderLayout.WEST);
+
+        // Back to Dashboard Button
+        JButton backToDashboardButton = new JButton("Back to Dashboard");
+        backToDashboardButton.setPreferredSize(new Dimension(200, 40)); // Adjust size as needed
+        backToDashboardButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backToDashboardButton.setBackground(new Color(0, 123, 255)); // Button color
+        backToDashboardButton.setForeground(Color.WHITE);
+        backToDashboardButton.setFocusPainted(false);
+
+        // Action listener for the button
+        backToDashboardButton.addActionListener(e -> {
+            frame.dispose(); // Close the chat window
+            dashboardFrame.showDashboard(); // Show the dashboard again
+        });
+
+        // Add the button at the top of the frame
+        frame.add(backToDashboardButton, BorderLayout.NORTH);
+
         frame.add(messagePanel, BorderLayout.CENTER);
         frame.add(inputPanel, BorderLayout.SOUTH);
 
@@ -69,6 +76,34 @@ public class ClientGUIFrame extends Component {
         inputField.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username));
     }
 
+    private JPanel createSidebarPanel() {
+        JPanel sidebarPanel = new JPanel(new BorderLayout());
+        sidebarPanel.setPreferredSize(new Dimension(200, 0)); // Set sidebar width
+        sidebarPanel.setBackground(new Color(240, 240, 240));
+
+        JLabel sidebarTitle = new JLabel("Active Users", SwingConstants.CENTER);
+        sidebarTitle.setFont(new Font("Arial", Font.BOLD, 16));
+        sidebarTitle.setBorder(BorderFactory.createEmptyBorder(10, 0, 10, 0));
+
+        // Active users list
+        activeUsersList = new JList<>();
+        activeUsersList.setFont(new Font("Arial", Font.PLAIN, 14));
+        activeUsersList.setFixedCellHeight(30);
+        activeUsersList.setBackground(new Color(245, 245, 245));
+        JScrollPane listScrollPane = new JScrollPane(activeUsersList);
+
+        sidebarPanel.add(sidebarTitle, BorderLayout.NORTH);
+        sidebarPanel.add(listScrollPane, BorderLayout.CENTER);
+
+        // Initial population of active users
+        updateActiveUsersList(new String[]{"Hafiz Sohaib", "Abdullah", "Khuzaima", "BugFixer"});
+
+        return sidebarPanel;
+    }
+
+    public void updateActiveUsersList(String[] activeUsers) {
+        activeUsersList.setListData(activeUsers);
+    }
 
     void changeUsername(JDialog settingsDialog) {
         String newUsername = JOptionPane.showInputDialog(settingsDialog, "Enter new username:", username);

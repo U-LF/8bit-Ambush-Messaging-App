@@ -7,45 +7,28 @@
     </content>
     <orderEntry type="jdk" jdkName="openjdk-23" jdkType="JavaSDK" />
     <orderEntry type="sourceFolder" forTests="false" />
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://$USER_HOME$/Downloads/javax.websocket-api-1.1.jar!/" />
-          <root url="jar://$USER_HOME$/Downloads/gson-2.11.0.jar!/" />
-          <root url="jar://$USER_HOME$/Downloads/postgresql-42.7.4.jar!/" />
-        </CLASSES>
-        <JAVADOC />
-        <SOURCES>
-          <root url="file://$MODULE_DIR$/../ClientCLI/src" />
-          <root url="file://$MODULE_DIR$/../ClientGUI/src" />
-          <root url="file://$MODULE_DIR$/../ClientShared/src" />
-          <root url="file://$MODULE_DIR$/src" />
-          <root url="file://$MODULE_DIR$/../ServerCLI/src" />
-        </SOURCES>
-      </library>
-    </orderEntry>
-    <orderEntry type="module-library">
-      <library>
-        <CLASSES>
-          <root url="jar://D:/Java Jar Files/postgresql-42.7.4.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../All Data From D Drive/Softwares/postgresql-42.7.4.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/Java Jar Files/javax.websocket-api-1.1.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../All Data From D Drive/Softwares/javax.websocket-api-1.1.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
       </library>
     </orderEntry>
-    <orderEntry type="module-library">
+    <orderEntry type="module-library" exported="">
       <library>
         <CLASSES>
-          <root url="jar://D:/Java Jar Files/gson-2.11.0.jar!/" />
+          <root url="jar://$MODULE_DIR$/../../../All Data From D Drive/Softwares/gson-2.11.0.jar!/" />
         </CLASSES>
         <JAVADOC />
         <SOURCES />
