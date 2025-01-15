@@ -45,7 +45,7 @@ public class DashboardFrame {
         JButton p2pButton = createStyledCardButton("P2P", Icons.getIcon("p2p.png", 80, 80), e -> openP2PDialog(dashboardFrame));
         JButton connectButton = createStyledCardButton("Connect to ChatRoom", Icons.getIcon("chatroom.png", 80, 80), e -> {
             dashboardFrame.dispose();
-            ClientConnection.connectToServer(); // Placeholder for server connection logic
+            ClientConnection.connectToServer(dashboardFrame); // Placeholder for server connection logic
         });
         JButton configButton = createStyledCardButton("Config", Icons.getIcon("config.png", 80, 80), e -> openConfigEditor(dashboardFrame));
 
