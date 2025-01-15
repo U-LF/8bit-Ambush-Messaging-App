@@ -1,8 +1,8 @@
-import javax.swing.border.AbstractBorder;
 import java.awt.*;
+import javax.swing.border.*;
 
 public class NeonBorder extends AbstractBorder {
-    private final int radius;
+    private int radius;
 
     public NeonBorder(int radius) {
         this.radius = radius;
@@ -10,19 +10,46 @@ public class NeonBorder extends AbstractBorder {
 
     @Override
     public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-        Graphics2D g2d = (Graphics2D) g.create();
+        Graphics2D g2d = (Graphics2D) g;
         g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
-        // Neon glow effect for the border
-        g2d.setStroke(new BasicStroke(3));
-        g2d.setColor(new Color(204, 51, 255)); // Neon purple color
-        g2d.drawRoundRect(x, y, width - 1, height - 1, radius, radius); // Rounded corners
+        // Create a gradient from cyan to blue for the neon effect
+        GradientPaint gradient = new GradientPaint(0, 0, new Color(162, 69, 196), 0, height, new Color(0, 255, 13));
+        g2d.setPaint(gradient);
 
-        g2d.dispose();
+        g2d.setStroke(new BasicStroke(3)); // Set thickness for the gradient border
+        g2d.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
     }
 
     @Override
     public Insets getBorderInsets(Component c) {
-        return new Insets(5, 5, 5, 5);
+        return new Insets(5, 5, 5, 5); // Adjust insets for the neon effect
     }
 }
+
+
+
+/*import java.awt.*;
+import javax.swing.border.*;
+
+public class NeonBorder extends AbstractBorder {
+    private int radius;
+
+    public NeonBorder(int radius) {
+        this.radius = radius;
+    }
+
+    @Override
+    public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
+        Graphics2D g2d = (Graphics2D) g;
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setColor(new Color(0, 166, 255)); // Cyan color for the neon glow
+        g2d.setStroke(new BasicStroke(1));
+        g2d.drawRoundRect(x, y, width - 1, height - 1, radius, radius);
+    }
+
+    @Override
+    public Insets getBorderInsets(Component c) {
+        return new Insets(1, 1, 1, 1);
+    }
+}*/

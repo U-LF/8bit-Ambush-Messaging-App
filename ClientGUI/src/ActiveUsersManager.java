@@ -1,8 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.net.URL;
-//import ThemeManagerDashboard;
-
 
 public class ActiveUsersManager {
 
@@ -23,13 +21,13 @@ public class ActiveUsersManager {
 
             JButton activeUsersButton = new JButton(activeUsersIcon);
             styleButton(activeUsersButton);
-            activeUsersButton.addActionListener(event -> showActiveUsersDialog(frame)); // Use 'event' here
+            activeUsersButton.addActionListener(event -> showActiveUsersDialog(frame));
             return activeUsersButton;
-        } catch (Exception exception) { // Renamed to 'exception'
+        } catch (Exception exception) {
             System.err.println("Error loading active users icon: " + exception.getMessage());
             JButton activeUsersButton = new JButton("Active Users");
             styleButton(activeUsersButton);
-            activeUsersButton.addActionListener(event -> showActiveUsersDialog(frame)); // Use 'event' here
+            activeUsersButton.addActionListener(event -> showActiveUsersDialog(frame));
             return activeUsersButton;
         }
     }
@@ -46,10 +44,15 @@ public class ActiveUsersManager {
 
     private void styleButton(JButton button) {
         button.setBorderPainted(false);
-        button.setBorder(null);
         button.setContentAreaFilled(false);
         button.setFocusPainted(false);
         button.setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
-        themeManager.updateButtonStyle(button);
+        themeManager.updateTheme(button); // Apply global theme to the button
+
+        // Apply rounded borders manually
+        button.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(Color.CYAN, 2),  // Set the border color and thickness
+                BorderFactory.createEmptyBorder(10, 10, 10, 10)  // Padding inside the button
+        ));
     }
 }

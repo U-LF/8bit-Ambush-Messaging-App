@@ -1,3 +1,4 @@
+package resources; // Make sure this matches your folder structure (if it's in resources package)
 import javax.swing.JOptionPane;
 
 public class DeveloperInfo {
