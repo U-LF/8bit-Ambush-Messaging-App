@@ -11,3 +11,4 @@ public class MessageAppender {
         SwingUtilities.invokeLater(() -> messageArea.append(message + "\n"));
     }
 }
+

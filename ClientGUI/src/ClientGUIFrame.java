@@ -21,7 +21,7 @@ public class ClientGUIFrame extends Component {
         this.inputField = new RoundedTextField(20);
         this.activeUsersManager = new ActiveUsersManager(themeManager);
         this.settingsManager = new SettingsManager();
-        this.messageAppender = new MessageAppender(messageArea);
+        this.messageAppender = new MessageAppender(messageArea);  // This should work fine now
         this.dashboardFrame = new DashboardFrame(); // Initialize the reference correctly
     }
 
@@ -52,7 +52,7 @@ public class ClientGUIFrame extends Component {
         // Back to Dashboard Button
         JButton backToDashboardButton = new JButton("Back to Dashboard");
         backToDashboardButton.setPreferredSize(new Dimension(200, 40)); // Adjust size as needed
-        backToDashboardButton.setFont(new Font("Arial", Font.BOLD, 14));
+        backToDashboardButton.setFont(new Font("Muli", Font.BOLD, 16));
         backToDashboardButton.setBackground(new Color(0, 123, 255)); // Button color
         backToDashboardButton.setForeground(Color.WHITE);
         backToDashboardButton.setFocusPainted(false);
@@ -125,6 +125,7 @@ public class ClientGUIFrame extends Component {
         messageAppender.appendMessage(message);
     }
 
+
     public JTextArea getMessageArea() {
         return messageArea;
     }
@@ -137,3 +138,5 @@ public class ClientGUIFrame extends Component {
         return themeManager;
     }
 }
+
+

@@ -38,7 +38,21 @@ public class AboutDialog {
         // Add action listeners
         developersButton.addActionListener(e -> DeveloperInfo.showDeveloperInfo());
         faqsButton.addActionListener(e -> FAQsInfo.showFaqsInfo(parentFrame));
-        visionButton.addActionListener(e -> VisionInfo.showVisionInfo());
+        visionButton.addActionListener(e -> VisionInfo.showVisionInfo(parentFrame));
+        // Add key listener for backspace functionality to close the dialog
+        aboutDialog.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyPressed(java.awt.event.KeyEvent e) {
+                if (e.getKeyCode() == java.awt.event.KeyEvent.VK_BACK_SPACE) {
+                    aboutDialog.dispose();  // Close the dialog on backspace press
+                }
+            }
+        });
+
+// Make the dialog focusable so it can capture key events
+        aboutDialog.setFocusable(true);
+        aboutDialog.setFocusableWindowState(true);
+
 
         // Add components to the dialog
         aboutDialog.add(developersButton);

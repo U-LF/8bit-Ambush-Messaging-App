@@ -1,9 +1,6 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
-import java.net.URL;
-import javax.imageio.ImageIO;
 
 public class SignupFrame extends JFrame {
     private JTextField usernameField, displayNameField;
@@ -27,11 +24,11 @@ public class SignupFrame extends JFrame {
         JLabel imageLabel = new JLabel();
         imageLabel.setBounds(50, 50, 350, 400); // Adjust size and position
         try {
-            URL imageUrl = new URL("https://img.lovepik.com/element/45009/2341.png_300.png");
-            Image image = ImageIO.read(imageUrl);
-            Image scaledImage = image.getScaledInstance(350, 400, Image.SCALE_SMOOTH); // Scaling image to fit
+            // Load image from the "icons" package
+            ImageIcon imageIcon = new ImageIcon(getClass().getResource("/icons/signup.png"));
+            Image scaledImage = imageIcon.getImage().getScaledInstance(350, 400, Image.SCALE_SMOOTH); // Scaling image
             imageLabel.setIcon(new ImageIcon(scaledImage));
-        } catch (IOException e) {
+        } catch (Exception e) {
             e.printStackTrace();
             imageLabel.setText("Image not found!");
             imageLabel.setHorizontalAlignment(SwingConstants.CENTER);
