@@ -1,6 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.net.Socket;
 
 public class ClientGUIFrame extends Component {
     private final DataOutputStream outToServer;
@@ -13,8 +14,9 @@ public class ClientGUIFrame extends Component {
     private final MessageAppender messageAppender;
     private JList<String> activeUsersList; // JList to display active users
     private DashboardFrame dashboardFrame; // Reference to the DashboardFrame
+    private Socket clientSocket;
 
-    public ClientGUIFrame(DataOutputStream outToServer) {
+    public ClientGUIFrame(DataOutputStream outToServer, Socket clientSocket) {
         this.outToServer = outToServer;
         this.themeManager = new ThemeManagerDashboard(); // Correct initialization
         this.messageArea = new JTextArea();
@@ -23,6 +25,7 @@ public class ClientGUIFrame extends Component {
         this.settingsManager = new SettingsManager();
         this.messageAppender = new MessageAppender(messageArea);  // This should work fine now
         this.dashboardFrame = new DashboardFrame(); // Initialize the reference correctly
+        this.clientSocket = clientSocket;
     }
 
     public void showGUI() {
@@ -60,6 +63,7 @@ public class ClientGUIFrame extends Component {
         // Action listener for the button
         backToDashboardButton.addActionListener(e -> {
             frame.dispose(); // Close the chat window
+            ClientConnection.CloseConnection(clientSocket);
             dashboardFrame.showDashboard(); // Show the dashboard again
         });
 
@@ -138,5 +142,3 @@ public class ClientGUIFrame extends Component {
         return themeManager;
     }
 }
-
-

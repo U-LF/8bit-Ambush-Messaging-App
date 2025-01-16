@@ -102,7 +102,8 @@ public class DashboardFrame {
     }
 
     private JButton createStyledCardButton(String text, ImageIcon icon, ActionListener actionListener) {
-        JButton button = new JButton("<html><center>" + text + "<br>Some words about</center></html>");
+        //JButton button = new JButton("<html><center>" + text + "<br>Some words about</center></html>");
+        JButton button = new JButton("<html><center>" + text);
         button.setFocusPainted(false);
         button.setOpaque(false);
         button.setContentAreaFilled(false);
@@ -268,10 +269,3 @@ public class DashboardFrame {
         p2pDialog.setVisible(true);
     }
 }
-
-
-
-
-
-
-

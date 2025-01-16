@@ -6,6 +6,7 @@ import ClientShared.ConnectionAddress;
 
 public class ClientConnection {
     private static DataOutputStream outToServer;
+    //private static Socket clientSocket;
     // Method to connect to the server
     public static void connectToServer(JFrame dashboardFrame) {
         try {
@@ -14,6 +15,7 @@ public class ClientConnection {
 
             // Connect to the server
             Socket clientSocket = new Socket(serverAddress.getIpAddress(), serverAddress.getPort());
+            //clientSocket = new Socket(serverAddress.getIpAddress(), serverAddress.getPort());
             System.out.println("Connected to server at " + serverAddress.getIpAddress() + ":" + serverAddress.getPort());
 
             // Initialize streams for communication
@@ -21,7 +23,7 @@ public class ClientConnection {
             outToServer = new DataOutputStream(clientSocket.getOutputStream());
 
             // Create and show the GUI
-            ClientGUIFrame gui = new ClientGUIFrame(outToServer);
+            ClientGUIFrame gui = new ClientGUIFrame(outToServer, clientSocket);
             gui.showGUI();
 
             // Get the client's name
@@ -46,6 +48,13 @@ public class ClientConnection {
 
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Error connecting to server: " + e.getMessage(), "Connection Error", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+    public static void CloseConnection(Socket clientSocket){
+        try{
+            clientSocket.close();
+        }catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
