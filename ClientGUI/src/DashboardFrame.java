@@ -5,7 +5,7 @@ import java.io.*;
 import javax.swing.border.Border;
 import resources.Icons;
 import java.awt.geom.RoundRectangle2D;
-import dialogs.AboutDialog;
+//import dialogs.AboutDialog;
 
 
 

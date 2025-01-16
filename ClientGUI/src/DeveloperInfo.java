@@ -1,4 +1,4 @@
-package resources;
+//package resources;
 
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;

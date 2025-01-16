@@ -1,10 +1,10 @@
-package dialogs;
+//package dialogs;
 import dialogs.RoundedGradientButton;
 
-import resources.DeveloperInfo;
-import resources.FAQsInfo;
+//import resources.DeveloperInfo;
+//import resources.FAQsInfo;
 import resources.Icons;
-import resources.VisionInfo;
+//import resources.VisionInfo;
 
 import javax.swing.*;
 import java.awt.*;
