@@ -7,7 +7,8 @@ public class MessageSender {
         try {
             String message = inputField.getText().trim();
             if (!message.isEmpty()) {
-                outToServer.writeBytes(username + ": " + inputField.getText() + "\n");
+                System.out.println("Sending message with username: " + username); // Debug log
+                outToServer.writeBytes(username + ": " + message + "\n");
                 outToServer.flush();
                 appendMessage(messageArea, username + ": " + message);  // Append message in messageArea
                 inputField.setText("");  // Clear input field after sending
@@ -16,6 +17,7 @@ public class MessageSender {
             appendMessage(messageArea, "Error sending message: " + e.getMessage());  // Append error if any
         }
     }
+
 
     private static void appendMessage(JTextArea messageArea, String message) {
         SwingUtilities.invokeLater(() -> {

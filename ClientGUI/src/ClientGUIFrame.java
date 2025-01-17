@@ -1,5 +1,7 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.io.*;
 import java.net.Socket;
 
@@ -7,7 +9,7 @@ public class ClientGUIFrame extends Component {
     private final DataOutputStream outToServer;
     private final JTextArea messageArea;
     private final JTextField inputField;
-    private String username = "Anonymous"; // Default username
+    private String username = "User"; // Default username
     private ThemeManagerDashboard themeManager;
     private final ActiveUsersManager activeUsersManager;
     private final SettingsManager settingsManager;
@@ -23,7 +25,7 @@ public class ClientGUIFrame extends Component {
         this.inputField = new RoundedTextField(20);
         this.activeUsersManager = new ActiveUsersManager(themeManager);
         this.settingsManager = new SettingsManager();
-        this.messageAppender = new MessageAppender(messageArea);  // This should work fine now
+        this.messageAppender = new MessageAppender(messageArea); // This should work fine now
         this.dashboardFrame = new DashboardFrame(); // Initialize the reference correctly
         this.clientSocket = clientSocket;
     }
@@ -76,8 +78,72 @@ public class ClientGUIFrame extends Component {
         frame.setLocationRelativeTo(null);
         frame.setVisible(true);
 
+        // Add ActionListener for send button and input field
         sendButton.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username));
         inputField.addActionListener(e -> MessageSender.sendMessage(outToServer, inputField, messageArea, username));
+
+        // Global KeyListener for backspace
+        frame.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                handleBackspaceKey(frame, e);
+            }
+        });
+
+        // Add KeyListener to the input field for consistent handling
+        inputField.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                handleBackspaceKey(frame, e);
+            }
+        });
+
+        // Ensure the frame always requests focus for the KeyListener
+        frame.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                frame.requestFocusInWindow();
+            }
+        });
+
+        // Request focus to activate the KeyListener
+        frame.setFocusable(true);
+        frame.requestFocusInWindow();
+    }
+
+    private void handleBackspaceKey(JFrame frame, KeyEvent e) {
+        if (e.getKeyCode() == KeyEvent.VK_BACK_SPACE) {
+            if (inputField.isFocusOwner()) {
+                // If the input field is focused
+                if (inputField.getText().isEmpty()) {
+                    // Input field is empty, show the back-to-dashboard prompt
+                    int confirm = JOptionPane.showConfirmDialog(
+                            frame,
+                            "Are you sure you want to return to the dashboard?",
+                            "Confirm Navigation",
+                            JOptionPane.YES_NO_OPTION
+                    );
+                    if (confirm == JOptionPane.YES_OPTION) {
+                        frame.dispose(); // Close the chat window
+                        ClientConnection.CloseConnection(clientSocket);
+                        dashboardFrame.showDashboard(); // Show the dashboard again
+                    }
+                }
+            } else {
+                // If focus is anywhere else, directly show the back-to-dashboard prompt
+                int confirm = JOptionPane.showConfirmDialog(
+                        frame,
+                        "Are you sure you want to return to the dashboard?",
+                        "Confirm Navigation",
+                        JOptionPane.YES_NO_OPTION
+                );
+                if (confirm == JOptionPane.YES_OPTION) {
+                    frame.dispose(); // Close the chat window
+                    ClientConnection.CloseConnection(clientSocket);
+                    dashboardFrame.showDashboard(); // Show the dashboard again
+                }
+            }
+        }
     }
 
     private JPanel createSidebarPanel() {
@@ -128,7 +194,6 @@ public class ClientGUIFrame extends Component {
     public void appendMessage(String message) {
         messageAppender.appendMessage(message);
     }
-
 
     public JTextArea getMessageArea() {
         return messageArea;

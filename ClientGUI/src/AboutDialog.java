@@ -9,6 +9,7 @@ import resources.Icons;
 import javax.swing.*;
 import java.awt.*;
 
+
 public class AboutDialog {
 
     public static void openAboutDialog(JFrame parentFrame) {
@@ -39,6 +40,7 @@ public class AboutDialog {
         developersButton.addActionListener(e -> DeveloperInfo.showDeveloperInfo());
         faqsButton.addActionListener(e -> FAQsInfo.showFaqsInfo(parentFrame));
         visionButton.addActionListener(e -> VisionInfo.showVisionInfo(parentFrame));
+
         // Add key listener for backspace functionality to close the dialog
         aboutDialog.addKeyListener(new java.awt.event.KeyAdapter() {
             @Override
@@ -49,10 +51,10 @@ public class AboutDialog {
             }
         });
 
-// Make the dialog focusable so it can capture key events
+        // Make the dialog focusable so it can capture key events
         aboutDialog.setFocusable(true);
         aboutDialog.setFocusableWindowState(true);
-
+        aboutDialog.requestFocusInWindow();  // Explicitly request focus
 
         // Add components to the dialog
         aboutDialog.add(developersButton);
