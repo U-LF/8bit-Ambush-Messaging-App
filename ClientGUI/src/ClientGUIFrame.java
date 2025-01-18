@@ -41,6 +41,10 @@ public class ClientGUIFrame extends Component {
 
         JButton sendButton = SendButtonFactory.createSendButton(); // Create send button
 
+
+        // Message area panel with correct scroll behavior
+        JScrollPane messageScrollPane = createMessageScrollPane();
+
         // Input panel
         JPanel inputPanel = new JPanel(new BorderLayout());
         inputField.setBackground(Color.LIGHT_GRAY);
@@ -72,7 +76,7 @@ public class ClientGUIFrame extends Component {
         // Add the button at the top of the frame
         frame.add(backToDashboardButton, BorderLayout.NORTH);
 
-        frame.add(messagePanel, BorderLayout.CENTER);
+        frame.add(messageScrollPane, BorderLayout.CENTER);
         frame.add(inputPanel, BorderLayout.SOUTH);
 
         frame.setLocationRelativeTo(null);
@@ -109,6 +113,7 @@ public class ClientGUIFrame extends Component {
         // Request focus to activate the KeyListener
         frame.setFocusable(true);
         frame.requestFocusInWindow();
+
     }
 
     private void handleBackspaceKey(JFrame frame, KeyEvent e) {
@@ -144,6 +149,29 @@ public class ClientGUIFrame extends Component {
                 }
             }
         }
+    }
+
+    private JScrollPane createMessageScrollPane() {
+        JScrollPane messageScrollPane = new JScrollPane(messageArea);
+
+        // Make sure the JTextArea has word wrap enabled
+        messageArea.setWrapStyleWord(true);
+        messageArea.setLineWrap(true);
+        messageArea.setEditable(false); // Prevent editing directly
+
+        // Hide the default scrollbars and apply the custom scrollbar
+        messageScrollPane.getVerticalScrollBar().setUI(new SlimScrollBarUI());
+        messageScrollPane.getHorizontalScrollBar().setUI(new SlimScrollBarUI());
+
+        // Optionally set the size of the scrollbars
+        messageScrollPane.getVerticalScrollBar().setPreferredSize(new Dimension(8, 0)); // Vertical scrollbar width
+        messageScrollPane.getHorizontalScrollBar().setPreferredSize(new Dimension(0, 8)); // Horizontal scrollbar height
+
+        // Hide default scrollbar and only show custom scrollbar when needed
+        messageScrollPane.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);  // Show vertical scrollbar only when needed
+        messageScrollPane.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_AS_NEEDED);  // Show horizontal scrollbar only when needed
+
+        return messageScrollPane;
     }
 
     private JPanel createSidebarPanel() {
