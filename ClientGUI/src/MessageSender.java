@@ -7,8 +7,8 @@ public class MessageSender {
         try {
             String message = inputField.getText().trim();
             if (!message.isEmpty()) {
-                System.out.println("Sending message with username: " + username); // Debug log
-                outToServer.writeBytes(username + ": " + message + "\n");
+                //System.out.println("Sending message with username: " + username); // Debug log
+                outToServer.writeBytes(message + "\n");
                 outToServer.flush();
                 appendMessage(messageArea, username + ": " + message);  // Append message in messageArea
                 inputField.setText("");  // Clear input field after sending

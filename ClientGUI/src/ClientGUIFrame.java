@@ -30,6 +30,12 @@ public class ClientGUIFrame extends Component {
         this.clientSocket = clientSocket;
     }
 
+    public void setUsername (String username){
+        if(!(username == null || username.trim().isEmpty())){
+            this.username = username;
+        }
+    }
+
     public void showGUI() {
         JFrame frame = new JFrame("Messaging App");
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);

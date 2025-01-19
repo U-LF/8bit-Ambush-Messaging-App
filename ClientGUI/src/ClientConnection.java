@@ -6,7 +6,6 @@ import ClientShared.ConnectionAddress;
 
 public class ClientConnection {
     private static DataOutputStream outToServer;
-    //private static Socket clientSocket;
     // Method to connect to the server
     public static void connectToServer(JFrame dashboardFrame) {
         try {
@@ -15,7 +14,6 @@ public class ClientConnection {
 
             // Connect to the server
             Socket clientSocket = new Socket(serverAddress.getIpAddress(), serverAddress.getPort());
-            //clientSocket = new Socket(serverAddress.getIpAddress(), serverAddress.getPort());
             System.out.println("Connected to server at " + serverAddress.getIpAddress() + ":" + serverAddress.getPort());
 
             // Initialize streams for communication
@@ -31,6 +29,7 @@ public class ClientConnection {
             if (name == null || name.trim().isEmpty()) {
                 name = "Anonymous";
             }
+            gui.setUsername(name);
             outToServer.writeBytes(name + "\n");
 
             // Thread to listen for messages from the server
