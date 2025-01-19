@@ -200,7 +200,7 @@ public class ClientGUIFrame extends Component {
         sidebarPanel.add(listScrollPane, BorderLayout.CENTER);
 
         // Initial population of active users
-        updateActiveUsersList(new String[]{"Hafiz Sohaib", "Abdullah", "Khuzaima", "BugFixer"});
+        updateActiveUsersList(new String[]{" "});
 
         return sidebarPanel;
     }

@@ -1,11 +1,16 @@
 import javax.swing.*;
 import java.io.*;
 import java.net.*;
+import java.util.List;
+import java.util.ArrayList;
 
 import ClientShared.ConnectionAddress;
+import ClientShared.MessageUtils;
 
 public class ClientConnection {
     private static DataOutputStream outToServer;
+    private static final List<String> connectedClients = new ArrayList<>();
+
     // Method to connect to the server
     public static void connectToServer(JFrame dashboardFrame) {
         try {
@@ -37,7 +42,12 @@ public class ClientConnection {
                 try {
                     String serverMessage;
                     while ((serverMessage = inFromServer.readLine()) != null) {
-                        gui.appendMessage(serverMessage + "\n");
+                        if (serverMessage.startsWith("Currently connected clients:")) {
+                            updateConnectedClientsList(serverMessage);
+                            gui.updateActiveUsersList(connectedClients.toArray(new String[0]));
+                        } else {
+                            gui.appendMessage(serverMessage + "\n");
+                        }
                     }
                 } catch (IOException e) {
                     gui.appendMessage("Error reading from server: " + e.getMessage() + "\n");
@@ -55,5 +65,10 @@ public class ClientConnection {
         }catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    private static void updateConnectedClientsList(String serverMessage) {
+        connectedClients.clear();
+        connectedClients.addAll(List.of(MessageUtils.makeStringArray(MessageUtils.trimString(serverMessage, "Currently connected clients:"))));
     }
 }
