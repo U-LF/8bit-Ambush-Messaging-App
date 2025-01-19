@@ -3,7 +3,7 @@ import java.net.Socket;
 
 public class BackendService {
     public static boolean login(String username, String password) {
-        try (Socket socket = new Socket("localhost", 3456);
+        try (Socket socket = new Socket("203.101.178.27", 16262);
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 
@@ -21,7 +21,7 @@ public class BackendService {
     }
 
     public static boolean signup(String username, String displayName, String password) {
-        try (Socket socket = new Socket("localhost", 3456);
+        try (Socket socket = new Socket("203.101.178.27", 16262);
              BufferedWriter writer = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
              BufferedReader reader = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
 

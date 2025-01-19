@@ -3,6 +3,7 @@
     <output-path>$PROJECT_DIR$/out/artifacts/ClientGUI_jar</output-path>
     <root id="archive" name="ClientGUI.jar">
       <element id="module-output" name="ClientGUI" />
+      <element id="module-output" name="ClientShared" />
     </root>
   </artifact>
 </component>

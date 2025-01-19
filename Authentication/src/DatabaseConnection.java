@@ -4,7 +4,7 @@ import java.net.Socket;
 
 public class DatabaseConnection {
     private static final String DB_SERVER_HOST = "localhost";
-    private static final int DB_SERVER_PORT = 2457;
+    private static final int DB_SERVER_PORT = 1234;
 
     public String sendRequest(String request) {
         try (Socket dbSocket = new Socket(DB_SERVER_HOST, DB_SERVER_PORT);

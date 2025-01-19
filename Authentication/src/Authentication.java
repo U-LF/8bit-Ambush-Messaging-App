@@ -6,7 +6,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class Authentication {
-    private static final int AUTH_PORT = 3456;
+    private static final int AUTH_PORT = 16262;
     private final ExecutorService executor;
     private final DatabaseConnection dbConnection;
 
