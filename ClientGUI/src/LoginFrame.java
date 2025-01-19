@@ -113,8 +113,4 @@ public class LoginFrame extends JFrame {
             errorLabel.setText("Invalid credentials.");
         }
     }
-
-    /*public static void main(String[] args) {
-        new LoginFrame();
-    }*/
 }

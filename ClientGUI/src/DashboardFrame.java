@@ -2,13 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
-import javax.swing.border.Border;
 import resources.Icons;
-import java.awt.geom.RoundRectangle2D;
-//import dialogs.AboutDialog;
-
-
-
 
 public class DashboardFrame {
     private boolean isDarkTheme = false; // To track the current theme state
@@ -18,14 +12,6 @@ public class DashboardFrame {
         dashboardFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         dashboardFrame.setMinimumSize(new Dimension(700, 600));
         dashboardFrame.setPreferredSize(new Dimension(900, 700));
-
-        // Remove the title bar and set the shape to rounded corners
-        //dashboardFrame.setUndecorated(true); // Removes the default title bar
-        //dashboardFrame.setShape(new RoundRectangle2D.Double(0, 0, dashboardFrame.getWidth(), dashboardFrame.getHeight(), 20, 20)); // Rounded corners with radius 40
-
-       // dashboardFrame.getRootPane().setWindowDecorationStyle(JRootPane.NONE); // Optional: Removes any window decoration (like shadow)
-
-
 
         JPanel gradientPanel = new JPanel() {
             @Override
@@ -137,67 +123,6 @@ public class DashboardFrame {
         return button;
     }
 
-
-    // Custom border for rounded corners
-    /*static class RoundedBorder implements Border {
-        private final int radius;
-
-        RoundedBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 1, radius + 1, radius + 1, radius + 1);
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return true;
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            // Change the border color to a solid RED
-            g2d.setColor(Color.WHITE); // Change this to your preferred color
-            g2d.setStroke(new BasicStroke(5)); // Set the thickness of the border
-            g2d.drawRoundRect(x, y, width - 1, height - 1, radius, radius); // Draw the rounded border
-            g2d.dispose();
-        }
-    }*/
-
-    // Custom border for neon glow effect
-    /*static class NeonBorder implements Border {
-        private final int radius;
-
-        NeonBorder(int radius) {
-            this.radius = radius;
-        }
-
-        @Override
-        public Insets getBorderInsets(Component c) {
-            return new Insets(radius + 8, radius + 5, radius + 8, radius + 5); // Slightly bigger inset for the neon border
-        }
-
-        @Override
-        public boolean isBorderOpaque() {
-            return false; // Allow transparency
-        }
-
-        @Override
-        public void paintBorder(Component c, Graphics g, int x, int y, int width, int height) {
-            Graphics2D g2d = (Graphics2D) g.create();
-            //g2d.setColor(Color.CYAN); // Cyan color for the neon glow
-            g2d.setColor(new Color(214, 41, 232, 255)); // Purple neon glow
-
-            g2d.setStroke(new BasicStroke(5)); // Set thickness for the glow effect
-            g2d.drawRoundRect(x, y, width - 1, height - 1, radius, radius); // Draw the neon border
-            g2d.dispose();
-        }
-    }*/
-
-
     private void openConfigEditor(JFrame dashboardFrame) {
         JFrame configFrame = new JFrame("Edit Config");
         configFrame.setSize(400, 300);
@@ -234,27 +159,6 @@ public class DashboardFrame {
         configFrame.setLocationRelativeTo(null);
         configFrame.setVisible(true);
     }
-
-    /*private void openAboutDialog(JFrame dashboardFrame) {
-        JDialog aboutDialog = new JDialog(dashboardFrame, "About", true);
-        aboutDialog.setSize(500, 400);
-        aboutDialog.setLayout(new FlowLayout());
-
-        JButton developersButton = new JButton("Developers Team");
-        JButton faqsButton = new JButton("FAQs");
-        JButton visionButton = new JButton("Vision");
-
-        developersButton.addActionListener(e -> DeveloperInfo.showDeveloperInfo());
-        faqsButton.addActionListener(e -> FAQsInfo.showFaqsInfo());
-        visionButton.addActionListener(e -> VisionInfo.showVisionInfo());
-
-        aboutDialog.add(developersButton);
-        aboutDialog.add(faqsButton);
-        aboutDialog.add(visionButton);
-
-        aboutDialog.setLocationRelativeTo(dashboardFrame);
-        aboutDialog.setVisible(true);
-    }*/
 
     private void openP2PDialog(JFrame dashboardFrame) {
         JDialog p2pDialog = new JDialog(dashboardFrame, "P2P Chat", true);
